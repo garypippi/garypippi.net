@@ -7,7 +7,8 @@ import * as fs from 'fs'
 import { ls } from '../modules/fs/ls'
 import { fm } from '../modules/fs/fm'
 import { toml } from '../modules/md/toml'
-import { mdiClock, mdiTag, mdiTwitter, mdiGithub } from '@mdi/js'
+import { sns } from '../modules/sns'
+import { mdiClock, mdiTag } from '@mdi/js'
 
 const read = promisify(fs.readFile)
 
@@ -48,11 +49,11 @@ const index = (props: Props) => (
         </div>
         <div className="2xl:px-64 xl:px-48 lg:px-16 md:px-8 px-4 my-8 py-8 text-gray-400">
             <div className="flex flex-row justify-center items-center">
-                <a href="#" className="mr-2">
-                    <AppIcon size={24} class="inline">{mdiTwitter}</AppIcon>
+                <a href={sns.twitter.link} className="mr-2">
+                    <AppIcon size={24} class="inline">{sns.twitter.icon}</AppIcon>
                 </a>
-                <a href="#">
-                    <AppIcon size={24} class="inline">{mdiGithub}</AppIcon>
+                <a href={sns.github.link}>
+                    <AppIcon size={24} class="inline">{sns.github.icon}</AppIcon>
                 </a>
             </div>
         </div>
