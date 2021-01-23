@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react'
 
 interface Props {
     size?: number
-    class?: string
+    className?: string
 }
 
 export const AppIcon = (props: PropsWithChildren<Props>) => {
@@ -11,7 +11,7 @@ export const AppIcon = (props: PropsWithChildren<Props>) => {
             width={props.size}
             height={props.size}
             viewBox="0 0 24 24"
-            className={props.class}
+            className={props.className}
         >
             <path d={props.children?.toString()} className="fill-current"></path>
         </svg>
