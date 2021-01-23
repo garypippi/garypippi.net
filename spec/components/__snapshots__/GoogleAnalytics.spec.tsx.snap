@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GoogleAnalytics.tsx component should render 1`] = `
+Array [
+  <script
+    className="gaid"
+    type="text/plain"
+  >
+    hoge
+  </script>,
+  <script
+    async={true}
+    src="https://www.googletagmanager.com/gtag/js?id=hoge"
+  />,
+  <script
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
+                    gtag('config', 'hoge');
+                    ",
+      }
+    }
+  />,
+]
+`;
