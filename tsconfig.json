@@ -1,5 +1,5 @@
 {
-  "include": ["./pages"],
+  "include": ["./pages", "./components", "./modules"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
