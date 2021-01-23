@@ -7,14 +7,17 @@ import { ls } from '../modules/fs/ls'
 import { fm } from '../modules/fs/fm'
 import { converter } from '../modules/md'
 import { toml } from '../modules/md/toml'
-import { sns } from '../modules/sns'
-import 'highlight.js/styles/atom-one-dark.css'
+import * as sns from '../modules/sns'
 import { App } from '../components/App'
+import { AppHeader } from '../components/AppHeader'
+import { AppFooter } from '../components/AppFooter'
 import { AppIcon } from '../components/AppIcon'
 import { mdiClock, mdiTag } from '@mdi/js'
+import 'highlight.js/styles/atom-one-dark.css'
 
 
 interface Props {
+    links: sns.Link[]
     body: string
     attr: {
         title: string
@@ -30,18 +33,14 @@ const id = (props: Props) => (
         <Head>
             <title>{props.attr.title}</title>
         </Head>
-        <div className="py-8 my-8 flex flex-row justify-center items-center text-gray-900">
-            <a href="/">
-                <h1 className="text-5xl">garypippi</h1>
-            </a>
-        </div>
+        <AppHeader />
         <div className="2xl:px-64 xl:px-48 lg:px-16 md:px-8 px-4">
             <div className="mb-8">
                 <h1 className="text-3xl">{props.attr.title}</h1>
                 <div className="flex flex-row justify-start items-center mt-2">
-                    <AppIcon size={16} class="text-gray-500 mr-2">{mdiClock}</AppIcon>
+                    <AppIcon size={16} className="text-gray-500 mr-2">{mdiClock}</AppIcon>
                     <span>{props.attr.date}</span>
-                    <AppIcon size={16} class="text-gray-500 ml-2 mr-2">{mdiTag}</AppIcon>
+                    <AppIcon size={16} className="text-gray-500 ml-2 mr-2">{mdiTag}</AppIcon>
                     {props.attr.tags.map((tag, i) => (
                         <span className="text-xs rounded bg-gray-100 px-2 py-1 mr-2" key={i}>{tag}</span>
                     ))}
@@ -49,16 +48,7 @@ const id = (props: Props) => (
             </div>
             <div dangerouslySetInnerHTML={{__html: props.body}}></div>
         </div>
-        <div className="2xl:px-64 xl:px-48 lg:px-16 md:px-8 px-4 my-8 py-8 text-gray-400">
-            <div className="flex flex-row justify-center items-center">
-                <a href={sns.twitter.link} className="mr-2">
-                    <AppIcon size={24} class="inline">{sns.twitter.icon}</AppIcon>
-                </a>
-                <a href={sns.github.link}>
-                    <AppIcon size={24} class="inline">{sns.github.icon}</AppIcon>
-                </a>
-            </div>
-        </div>
+        <AppFooter links={props.links} />
     </App>
 )
 
@@ -83,6 +73,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
         const [attr, body] = fm(buffer.toString())
         return {
             props: {
+                links: sns.getLinks(),
                 attr: toml(attr),
                 body: converter.makeHtml(body)
             }
