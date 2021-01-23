@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppFooter.tsx should render 1`] = `
+<div
+  className="2xl:px-64 xl:px-48 lg:px-16 md:px-8 px-4 my-8 py-8 text-gray-400"
+>
+  <div
+    className="flex flex-row justify-center items-center"
+  >
+    <a
+      className="mr-2"
+      href="hoge"
+    >
+      <svg
+        className="inline"
+        height={24}
+        viewBox="0 0 24 24"
+        width={24}
+      >
+        <path
+          className="fill-current"
+          d="fuga"
+        />
+      </svg>
+    </a>
+    <a
+      className="mr-2"
+      href="fuga"
+    >
+      <svg
+        className="inline"
+        height={24}
+        viewBox="0 0 24 24"
+        width={24}
+      >
+        <path
+          className="fill-current"
+          d="hoge"
+        />
+      </svg>
+    </a>
+  </div>
+</div>
+`;
