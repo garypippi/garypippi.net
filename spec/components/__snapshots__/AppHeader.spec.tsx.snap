@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppHeader.tsx should render 1`] = `
+<div
+  className="py-8 my-8 flex flex-row justify-center items-center text-gray-900"
+>
+  <a
+    href="/"
+    onClick={[Function]}
+    onMouseEnter={[Function]}
+  >
+    <h1
+      className="text-5xl"
+    >
+      garypippi
+    </h1>
+  </a>
+</div>
+`;
