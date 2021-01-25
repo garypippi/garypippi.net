@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import Link from 'next/link'
 import { App } from '../components/App'
 import { AppHeader } from '../components/AppHeader'
@@ -29,10 +28,7 @@ interface Post {
 
 const index = (props: Props) => (
     <App>
-        <Head>
-            <title>garypippi.net</title>
-        </Head>
-        <AppHeader />
+        <AppHeader title="garypippi.net">garypippi.net</AppHeader>
         <div>{props.gid}</div>
         <div className="2xl:px-96 xl:px-64 lg:px-48 md:px-16 px-4">
             {props.posts.map((attr, i) => (

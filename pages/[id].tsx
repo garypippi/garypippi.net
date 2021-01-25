@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { join, basename } from 'path'
 import * as fs from 'fs'
@@ -30,10 +29,7 @@ const read = promisify(fs.readFile)
 
 const id = (props: Props) => (
     <App>
-        <Head>
-            <title>{props.attr.title}</title>
-        </Head>
-        <AppHeader />
+        <AppHeader title={props.attr.title}>garypippi.net</AppHeader>
         <div className="2xl:px-64 xl:px-48 lg:px-16 md:px-8 px-4">
             <div className="mb-8">
                 <h1 className="text-3xl">{props.attr.title}</h1>
