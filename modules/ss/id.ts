@@ -13,7 +13,6 @@ const getPath = async (id?: string) => id && getPaths.then(paths => {
     return paths.find(path => path.includes(id))
 })
 
-
 export const getStaticPaths = async () => {
     return ls(join(process.cwd(), 'blog')).then(paths => {
         return paths.map(path => `/${basename(path).slice(0, -3)}`)
