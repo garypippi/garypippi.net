@@ -3,38 +3,24 @@ import { App } from '../components/App'
 import { AppHeader } from '../components/AppHeader'
 import { AppFooter } from '../components/AppFooter'
 import { AppIcon } from '../components/AppIcon'
-import { promisify } from 'util'
-import { join, basename } from 'path'
-import * as fs from 'fs'
-import { ls } from '../modules/fs/ls'
-import { fm } from '../modules/fs/fm'
-import { toml } from '../modules/md/toml'
 import * as sns from '../modules/sns'
 import { mdiClock, mdiTag } from '@mdi/js'
+import { ls } from '../modules/ss'
 
-const read = promisify(fs.readFile)
 
 interface Props {
-    gid: string
-    posts: Post[]
+    posts: ls.Prop
     links: sns.Link[]
 }
-interface Post {
-    link: string
-    title: string
-    date: string
-    tags: string[]
-}
 
-const index = (props: Props) => (
+const indexPage = (props: Props) => (
     <App>
         <AppHeader title="garypippi.net">garypippi.net</AppHeader>
-        <div>{props.gid}</div>
         <div className="2xl:px-96 xl:px-64 lg:px-48 md:px-16 px-4">
             {props.posts.map((attr, i) => (
                 <Link
                     key={`post-link-${i}`}
-                    href={attr.link}
+                    href={attr.href}
                 >
                     <a className="my-6 py-2 px-2 block text-sm hover:bg-gray-100">
                         <h2 className="text-xl">{attr.title}</h2>
@@ -56,24 +42,13 @@ const index = (props: Props) => (
     </App>
 )
 
+export default indexPage
 
 export const getStaticProps = async () => {
-    return ls(join(process.cwd(), 'blog')).then(async paths => {
-        return {
-            props: {
-                links: sns.getLinks(),
-                posts: await Promise.all(
-                    paths.map(async path => {
-                        return read(path).then(buffer => ({
-                            link: `/${basename(path).slice(0, -3)}`,
-                            ...toml(fm(buffer.toString())[0])
-                        }))
-                    })
-                )
-            }
+    return ls.getStaticProps().then(posts => ({
+        props: {
+            links: sns.getLinks(),
+            posts
         }
-    })
+    }))
 }
-
-
-export default index
