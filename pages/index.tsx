@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { App } from '../components/App'
 import { AppHeader } from '../components/AppHeader'
 import { AppFooter } from '../components/AppFooter'
+import { AppPage } from '../components/AppPage'
 import { AppIcon } from '../components/AppIcon'
 import { mdiClock, mdiTag } from '@mdi/js'
 import { ls, getStaticPropsWithInitialState } from '../modules/ss'
@@ -14,17 +15,17 @@ interface Props {
 const indexPage = (props: Props) => (
     <App>
         <AppHeader title="garypippi.net">garypippi.net</AppHeader>
-        <div className="2xl:px-96 xl:px-64 lg:px-48 md:px-16 px-4">
+        <AppPage size="md">
             {props.posts.map((attr, i) => (
                 <Link
                     key={`post-link-${i}`}
                     href={attr.href}
                 >
-                    <a className="my-6 py-2 px-2 block text-sm hover:bg-gray-100">
-                        <h2 className="text-xl">{attr.title}</h2>
-                        <div className="flex flex-row justify-start items-center mt-2">
+                    <a className="my-6 py-2 px-2 md:py-4 md:px-6 block hover:bg-gray-100">
+                        <h2 className="my-2 md:text-lg">{attr.title}</h2>
+                        <div className="flex flex-row justify-start items-center">
                             <AppIcon size={16} className="text-gray-500 mr-2">{mdiClock}</AppIcon>
-                            <span>{attr.date}</span>
+                            <span className="text-sm">{attr.date}</span>
                         </div>
                         <div className="flex flex-row justify-start items-center mt-1">
                             <AppIcon size={16} className="text-gray-500 ml-px mr-2">{mdiTag}</AppIcon>
@@ -35,7 +36,7 @@ const indexPage = (props: Props) => (
                     </a>
                 </Link>
             ))}
-        </div>
+        </AppPage>
         <AppFooter />
     </App>
 )

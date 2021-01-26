@@ -2,7 +2,7 @@
 
 exports[`AppIcon.tsx should render 1`] = `
 <svg
-  className="hoge"
+  className="inline hoge"
   height={123}
   viewBox="0 0 24 24"
   width={123}

@@ -5,14 +5,14 @@ exports[`AppFooter.tsx should render 1`] = `
   className="2xl:px-64 xl:px-48 lg:px-16 md:px-8 px-4 my-8 py-8 text-gray-400"
 >
   <div
-    className="flex flex-row justify-center items-center"
+    className="flex flex-row justify-center items-center my-4"
   >
     <a
-      className="mr-2"
+      className="mr-2 last:mr-0"
       href="hoge"
     >
       <svg
-        className="inline"
+        className="inline "
         height={24}
         viewBox="0 0 24 24"
         width={24}
@@ -24,11 +24,11 @@ exports[`AppFooter.tsx should render 1`] = `
       </svg>
     </a>
     <a
-      className="mr-2"
+      className="mr-2 last:mr-0"
       href="fuga"
     >
       <svg
-        className="inline"
+        className="inline "
         height={24}
         viewBox="0 0 24 24"
         width={24}
@@ -38,6 +38,28 @@ exports[`AppFooter.tsx should render 1`] = `
           d="hoge"
         />
       </svg>
+    </a>
+  </div>
+  <div
+    className="flex justify-center items-center border-b my-4 pb-4"
+  >
+    <a
+      href="/about"
+      onClick={[Function]}
+      onMouseEnter={[Function]}
+    >
+      About
+    </a>
+  </div>
+  <div
+    className="flex justify-center items-center my-4 text-xs"
+  >
+    <a
+      href="/pp"
+      onClick={[Function]}
+      onMouseEnter={[Function]}
+    >
+      プライバシーポリシー
     </a>
   </div>
 </div>
