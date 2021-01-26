@@ -1,18 +1,14 @@
 import { AppIcon } from './AppIcon'
-import { Link } from '../modules/sns'
+import { useSnsLinks } from '../modules/store'
 
-interface Props {
-    links: Link[]
-}
-
-export const AppFooter = (props: Props) => {
+export const AppFooter = () => {
     return (
         <div className="2xl:px-64 xl:px-48 lg:px-16 md:px-8 px-4 my-8 py-8 text-gray-400">
             <div className="flex flex-row justify-center items-center">
-                {props.links.map(({ link, icon }, i) => link && (
+                {useSnsLinks().map(({ href, icon }, i) => href && (
                     <a
                         key={`footer-sns-links-${i}`}
-                        href={link}
+                        href={href}
                         className="mr-2"
                     >
                         <AppIcon

@@ -1,14 +1,16 @@
 import renderer from 'react-test-renderer'
 import { AppFooter } from '../../components/AppFooter'
-import { Link } from '../../modules/sns'
+import * as Store from '../../modules/store'
 
 
 describe('AppFooter.tsx', () => {
+    const snsLinks = [
+        { href: 'hoge', icon: 'fuga' },
+        { href: 'fuga', icon: 'hoge' }
+    ]
     it('should render', () => {
-        const links: Link[] = [
-            {link: 'hoge', icon: 'fuga'},
-            {link: 'fuga', icon: 'hoge'}
-        ]
-        expect(renderer.create(<AppFooter links={links} />)).toMatchSnapshot()
+        const spy = jest.spyOn(Store, 'useSnsLinks')
+        spy.mockImplementation(() => snsLinks)
+        expect(renderer.create(<AppFooter />)).toMatchSnapshot()
     })
 })

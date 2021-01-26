@@ -1,5 +1,7 @@
-import { AppProps } from 'next/app'
 import 'tailwindcss/tailwind.css'
+import { AppProps } from 'next/app'
+import { Provider } from 'react-redux'
+import { useStore } from '../modules/store'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useGtag } from '../components/GoogleAnalytics'
@@ -11,7 +13,9 @@ const App = ({ Component, pageProps }: AppProps) => {
         useEffect(cbfunc)
     }
     return (
-        <Component {...pageProps}/>
+        <Provider store={useStore(pageProps.initialState)}>
+            <Component {...pageProps}/>
+        </Provider>
     )
 }
 

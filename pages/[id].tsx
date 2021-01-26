@@ -1,22 +1,20 @@
 import { GetStaticProps, GetStaticPaths } from 'next'
-import * as sns from '../modules/sns'
 import { App } from '../components/App'
 import { AppHeader } from '../components/AppHeader'
 import { AppFooter } from '../components/AppFooter'
 import { AppIcon } from '../components/AppIcon'
 import { mdiClock, mdiTag } from '@mdi/js'
-import { id } from '../modules/ss'
+import { id, getStaticPropsWithInitialState } from '../modules/ss'
 import { Post } from '../types'
 import 'highlight.js/styles/atom-one-dark.css'
 
 
 interface Props {
-    links: sns.Link[]
     post: Post
 }
 
 
-const idPage = ({ post, links }: Props) => (
+const idPage = ({ post }: Props) => (
     <App>
         <AppHeader title={post.attr.title}>garypippi.net</AppHeader>
         <div className="2xl:px-64 xl:px-48 lg:px-16 md:px-8 px-4">
@@ -33,7 +31,7 @@ const idPage = ({ post, links }: Props) => (
             </div>
             <div dangerouslySetInnerHTML={{__html: post.body}}></div>
         </div>
-        <AppFooter links={links} />
+        <AppFooter />
     </App>
 )
 
@@ -50,12 +48,7 @@ export const getStaticProps: GetStaticProps<Props> = async ctx => {
     return id.getStaticProps(ctx.params?.id as string).then(post => {
         return ! post
             ? { notFound: true }
-            : {
-                props: {
-                    links: sns.getLinks(),
-                    post
-                }
-            }
+            : { props: getStaticPropsWithInitialState({ post }) }
     })
 }
 

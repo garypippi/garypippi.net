@@ -3,14 +3,12 @@ import { App } from '../components/App'
 import { AppHeader } from '../components/AppHeader'
 import { AppFooter } from '../components/AppFooter'
 import { AppIcon } from '../components/AppIcon'
-import * as sns from '../modules/sns'
 import { mdiClock, mdiTag } from '@mdi/js'
-import { ls } from '../modules/ss'
+import { ls, getStaticPropsWithInitialState } from '../modules/ss'
 
 
 interface Props {
     posts: ls.Prop
-    links: sns.Link[]
 }
 
 const indexPage = (props: Props) => (
@@ -38,7 +36,7 @@ const indexPage = (props: Props) => (
                 </Link>
             ))}
         </div>
-        <AppFooter links={props.links} />
+        <AppFooter />
     </App>
 )
 
@@ -46,9 +44,8 @@ export default indexPage
 
 export const getStaticProps = async () => {
     return ls.getStaticProps().then(posts => ({
-        props: {
-            links: sns.getLinks(),
+        props: getStaticPropsWithInitialState({
             posts
-        }
+        })
     }))
 }
