@@ -1,15 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AppIcon.tsx should render 1`] = `
-<svg
-  className="inline hoge"
-  height={123}
-  viewBox="0 0 24 24"
-  width={123}
->
-  <path
-    className="fill-current"
-    d="fuga"
-  />
-</svg>
-`;
+exports[`AppIcon.tsx should render 1`] = `"<svg width=\\"123\\" height=\\"123\\" viewBox=\\"0 0 24 24\\" class=\\"inline hoge\\"><path d=\\"fuga\\" class=\\"fill-current\\"></path></svg>"`;

@@ -1,8 +1,11 @@
-import renderer from 'react-test-renderer'
+import { render } from 'react-dom'
+import { mkcontainer } from '../mkcontainer'
 import { App } from '../../components/App'
 
 describe('App.tsx', () => {
     it('is a root container for garypippi.net', () => {
-        expect(renderer.create(<App><div>hoge</div></App>)).toMatchSnapshot()
+        const container = mkcontainer()
+        render(<App>hoge</App>, container)
+        expect(container.innerHTML).toMatchSnapshot()
     })
 })

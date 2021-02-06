@@ -1,11 +1,16 @@
-import renderer from 'react-test-renderer'
+import { render } from 'react-dom'
+import { mkcontainer } from '../mkcontainer'
 import { AppPage } from '../../components/AppPage'
 
 describe('AppPage.tsx', () => {
     it('should render md', () => {
-        expect(renderer.create(<AppPage size="md">hoge</AppPage>)).toMatchSnapshot()
+        const container = mkcontainer()
+        render(<AppPage size="md">hoge</AppPage>, container)
+        expect(container.innerHTML).toMatchSnapshot()
     })
     it('should render lg', () => {
-        expect(renderer.create(<AppPage size="lg">hoge</AppPage>)).toMatchSnapshot()
+        const container = mkcontainer()
+        render(<AppPage size="lg">hoge</AppPage>, container)
+        expect(container.innerHTML).toMatchSnapshot()
     })
 })

@@ -1,16 +1,11 @@
-import renderer from 'react-test-renderer'
+import { render } from 'react-dom'
+import { mkcontainer } from '../mkcontainer'
 import { AppIcon } from '../../components/AppIcon'
 
 describe('AppIcon.tsx', () => {
     it('should render', () => {
-        const component = renderer.create(
-            <AppIcon
-                size={123}
-                className="hoge"
-            >
-                fuga
-            </AppIcon>
-        )
-        expect(component).toMatchSnapshot()
+        const container = mkcontainer()
+        render(<AppIcon size={123} className="hoge">fuga</AppIcon>, container)
+        expect(container.innerHTML).toMatchSnapshot()
     })
 })

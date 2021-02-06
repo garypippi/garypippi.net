@@ -2,16 +2,12 @@ import 'tailwindcss/tailwind.css'
 import { AppProps } from 'next/app'
 import { Provider } from 'react-redux'
 import { useStore } from '../modules/store'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
-import { useGtag } from '../components/GoogleAnalytics'
+import { useGtag, GtagFn } from '../components/GoogleAnalytics'
+
+declare var gtag: GtagFn|undefined
 
 const App = ({ Component, pageProps }: AppProps) => {
-    const router = useRouter()
-    const cbfunc = useGtag(router)
-    if (cbfunc) {
-        useEffect(cbfunc)
-    }
+    useGtag(typeof gtag == 'function' && gtag)
     return (
         <Provider store={useStore(pageProps.initialState)}>
             <Component {...pageProps}/>

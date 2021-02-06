@@ -1,4 +1,5 @@
-import { NextRouter as Router } from 'next/router'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 interface Props {
     id?: string
@@ -35,24 +36,28 @@ export const GoogleAnalytics = (props: Props) => {
 
 
 export type GtagFn = ((type: string, id: string, params: {page_path: string}) => void)
-export type GtagFnOr<T> = GtagFn|T
-
-export declare var gtag: GtagFnOr<undefined>
-export const getGtagFn = (): GtagFnOr<false>  => typeof gtag == 'function' && gtag
 export const routeEvent = 'routeChangeComplete'
 
-export const createOnRouteChangeComplete = (gtagFn = getGtagFn()) => gtagFn && ((path: string) => {
-    const e = document.querySelector(`script.${idMarker}`)
-    if (e && e.textContent) {
-        gtagFn('config', e.textContent, {
+export const createOnRouteChangeComplete = (gid: string, gtag: GtagFn) => {
+    return (path: string) => {
+        gtag('config', gid, {
             page_path: path
         })
     }
-})
+}
 
-export const useGtag = (router: Router, onRouteChangeComplete = createOnRouteChangeComplete()) => {
-    return onRouteChangeComplete && (() => {
-        router.events.on(routeEvent, onRouteChangeComplete)
-        return () => router.events.off(routeEvent, onRouteChangeComplete)
-    })
+export const useGtag = (gtag?: GtagFn|false) => {
+    if (! gtag)
+        return
+    const e = document.querySelector(`script.${idMarker}`)
+    if (e && e.textContent) {
+        const { events: { on, off } } = useRouter()
+        const onRouteChangeComplete = createOnRouteChangeComplete(e.textContent, gtag)
+        useEffect(() => {
+            on(routeEvent, onRouteChangeComplete)
+            return () => {
+                off(routeEvent, onRouteChangeComplete)
+            }
+        })
+    }
 }

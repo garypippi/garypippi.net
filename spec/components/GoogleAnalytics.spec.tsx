@@ -1,63 +1,92 @@
-import renderer from 'react-test-renderer'
+import * as NextRouter from 'next/router'
+import { render, unmountComponentAtNode } from 'react-dom'
+import { act } from 'react-dom/test-utils'
+import { mkcontainer } from '../mkcontainer'
 import * as GoogleAnalytics from '../../components/GoogleAnalytics'
+
+// makes test component to call useEffect inside react component
+const mkcomponent = (gtag?: GoogleAnalytics.GtagFn) => {
+    return () => {
+        GoogleAnalytics.useGtag(gtag)
+        return <div />
+    }
+}
 
 describe('GoogleAnalytics.tsx', () => {
     describe('component', () => {
-        it('should not render', () => {
-            expect(renderer.create(<GoogleAnalytics.GoogleAnalytics />).toJSON()).toBe(null)
+        // make sure to remove root element after each test
+        afterEach(() => {
+            document.body.removeChild(
+                document.body.children[0]
+            )
         })
-        it('should render', () => {
-            expect(renderer.create(<GoogleAnalytics.GoogleAnalytics id="hoge" />)).toMatchSnapshot()
+        it('should not render when gid is not provided', () => {
+            const container = mkcontainer()
+            render(<GoogleAnalytics.GoogleAnalytics />, container)
+            expect(container.innerHTML).toBeFalsy()
+        })
+        it('should render when gid is provided', () => {
+            const container = mkcontainer()
+            render(<GoogleAnalytics.GoogleAnalytics id="hoge" />, container)
+            expect(container.innerHTML).toMatchSnapshot()
         })
     })
     describe('createOnRouteChangeComplete', () => {
-        it('should abort', () => {
-            expect(GoogleAnalytics.createOnRouteChangeComplete()).toBeFalsy()
-        })
-        it('should abort further', () => {
-            const gtagFn = jest.fn()
-            const cb = GoogleAnalytics.createOnRouteChangeComplete(gtagFn)
-            expect(cb).toBeTruthy()
-            if (cb) {
-                cb('hoge')
-            }
-            expect(gtagFn).not.toHaveBeenCalled()
-        })
-        it('should run further', () => {
-            const gtagFn = jest.fn()
-            const cb = GoogleAnalytics.createOnRouteChangeComplete(gtagFn)
-            document.head.innerHTML = `<script class="${GoogleAnalytics.idMarker}">hoge</script>`
-            expect(cb).toBeTruthy()
-            if (cb) {
-                cb('fuga')
-            }
-            expect(gtagFn).toHaveBeenCalledWith('config', 'hoge', {
-                page_path: 'fuga'
-            })
+        it('should run gtag', () => {
+            const gtag: GoogleAnalytics.GtagFn = jest.fn()
+            GoogleAnalytics.createOnRouteChangeComplete('hoge', gtag)('fuga')
+            expect(gtag).toHaveBeenCalledWith('config', 'hoge', { page_path: 'fuga' })
         })
     })
     describe('useGtag', () => {
-        const createRouter = (on?: Function , off?: Function): any => ({
-            events: {
-                on: on || jest.fn(),
-                off: off || jest.fn()
-            }
+        // make sure it does not query for gid
+        it('should abort when gtag is not provided', () => {
+            const spyQuerySelector = jest.spyOn(document, 'querySelector')
+            GoogleAnalytics.useGtag()
+            expect(spyQuerySelector).not.toHaveBeenCalled()
         })
-        it('should abort', () => {
-            expect(GoogleAnalytics.useGtag(createRouter())).toBeFalsy()
+        // make sure it queries for gid but abort after that
+        it('should abort when gid is not provided', () => {
+            const spyQuerySelector = jest.spyOn(document, 'querySelector')
+            const spyUseRouter = jest.spyOn(NextRouter, 'useRouter')
+            const spyCreateOnRouteChangeComplete = jest.spyOn(GoogleAnalytics, 'createOnRouteChangeComplete')
+            GoogleAnalytics.useGtag(jest.fn())
+            expect(spyQuerySelector).toHaveBeenCalledWith(`script.${GoogleAnalytics.idMarker}`)
+            expect(spyUseRouter).not.toHaveBeenCalled()
+            expect(spyCreateOnRouteChangeComplete).not.toHaveBeenCalled()
         })
-        it('should run', () => {
-            const on = jest.fn((_, cb) => cb())
-            const off = jest.fn((_, cb) => cb())
-            const onRouteChangeComplete = jest.fn()
-            const onEffect = GoogleAnalytics.useGtag(createRouter(on, off), onRouteChangeComplete)
-            expect(onEffect).toBeTruthy()
-            if (onEffect) {
-                onEffect()()
-                expect(on).toHaveBeenCalledWith(GoogleAnalytics.routeEvent, onRouteChangeComplete)
-                expect(off).toHaveBeenCalledWith(GoogleAnalytics.routeEvent, onRouteChangeComplete)
-                expect(onRouteChangeComplete).toHaveBeenCalledTimes(2)
-            }
+        describe('useEffect', () => {
+            // make sure to remove root element after each test
+            afterEach(() => {
+                document.body.removeChild(
+                    document.body.children[0]
+                )
+            })
+            it('should use effect', () => {
+                const container = mkcontainer()
+                const on = jest.fn(), off = jest.fn()
+                const router = { events: { on, off } } as any
+                jest.spyOn(NextRouter, 'useRouter').mockImplementation(() => router)
+                document.head.innerHTML = `<script class="${GoogleAnalytics.idMarker}">hoge</script>`
+
+                const Component = mkcomponent(jest.fn())
+
+                // mount component
+                // make sure it registers route event
+                act(() => {
+                    render(<Component />, container)
+                })
+
+                expect(on).toHaveBeenCalledWith(GoogleAnalytics.routeEvent, expect.any(Function))
+
+                // unmount component
+                // make sure it registers route event by executing clean up code
+                act(() => {
+                    unmountComponentAtNode(container)
+                })
+
+                expect(off).toHaveBeenCalledWith(GoogleAnalytics.routeEvent, expect.any(Function))
+            })
         })
     })
 })
