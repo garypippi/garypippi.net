@@ -1,5 +1,4 @@
 import { GetStaticProps } from 'next'
-// import Link from 'next/link'
 import { useSnsLinks } from '../modules/store'
 import { App } from '../components/App'
 import { AppHeader } from '../components/AppHeader'
@@ -18,7 +17,7 @@ export const AboutPage = () => {
                     <span className="my-2">@garypippi</span>
                     <ul className="my-2 text-sm text-gray-800">
                         <li>1996 ~ 2012 生存</li>
-                        <li>2012 ~ 2013 アメリカ ミシガン州 Grand Haven へホームステイ</li>
+                        <li>2012 ~ 2013 Grand Haven, MI, USA</li>
                         <li>2014 ~ 2018 琉球大学</li>
                         <li>2018 ~ 2020 沖縄のホームページ屋さん</li>
                         <li>2020 ~ 20?? 札幌のWEB屋さん</li>
@@ -35,12 +34,11 @@ export const AboutPage = () => {
                     </pre>
                 </div>
                 <div className="mb-8">
-                    <h2 className="my-2">garypippi.net is ...</h2>
+                    <h2 className="my-2">garypippi.net is built using ...</h2>
                     <div className="text-sm text-gray-800">
-                        <span>Built using</span>
                         <AppIcon size={48}>{mdiLanguageTypescript}</AppIcon>
                         <AppIcon size={48}>{mdiReact}</AppIcon>Next.js
-                        <AppIcon size={48}>{mdiTailwind}</AppIcon>tailwindcss
+                        <AppIcon size={48}>{mdiTailwind}</AppIcon>
                     </div>
                 </div>
             </AppPage>
