@@ -1,12 +1,13 @@
 const classes: {[key:string]: string} = {
     h1: '',
-    h2: 'my-6 text-2xl md:text-3xl',
-    h3: 'my-3 text-xl md:text-2xl',
+    h2: 'my-6 text-xl md:text-2xl pb-1 border-b',
+    h3: 'my-3 text-lg md:text-xl',
     h4: '',
     h5: '',
     h6: '',
     p: 'my-3 text-sm md:text-base',
     a: 'text-red-600',
+    ul: 'my-3 ml-6 text-sm list-disc',
     img: 'my-3',
     video: 'my-3',
     pre: 'hljs my-3 text-sm md:text-base'
