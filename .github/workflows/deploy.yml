@@ -14,6 +14,7 @@ jobs:
     deploy:
         runs-on: ubuntu-latest
         needs: test
+        environment: garypippi.net
         steps:
             - name: Deploy
               env:
