@@ -33,7 +33,7 @@
       }
     },
     {
-      "files": ["./*.js"],
+      "files": ["./*.js", "./cli/**/*"],
       "env": {
         "node": true
       }
