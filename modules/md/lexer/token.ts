@@ -29,7 +29,7 @@ export const task: F[][] = [[
     // s => f(rules.paragraph.exec(s), 'paragraph'),
     // () => null
 ], [
-    s => f(rules.strip.exec(s), 'strip'),
+    // s => f(rules.strip.exec(s), 'strip'),
     s => f(rules.code.exec(s), 'code'),
     s => f(rules.img.exec(s), 'img'),
     s => f(rules.a.exec(s), 'a'),
