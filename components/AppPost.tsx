@@ -1,5 +1,6 @@
-import { FunctionComponent, PropsWithChildren } from 'react'
+import { FunctionComponent, PropsWithChildren, createElement } from 'react'
 import { Token } from '../modules/md/lexer/token'
+import hljs from 'highlight.js'
 
 interface Props {
     token: Token
@@ -11,15 +12,29 @@ const AppPostInlineFragmentText = ({ token }: PropsWithChildren<Props>) => {
     )
 }
 
-const AppPostInlineFragmentImage = ({ token }: PropsWithChildren<Props>) => {
+const AppPostInlineFragmentImage = ({ token: { matches: [, path] } }: PropsWithChildren<Props>) => {
     return (
-        <img src={`https://s3-ap-northeast-1.amazonaws.com/garypippi.net/${token.matches[1]}`} alt={token.matches[0]} />
+        <img src={`https://s3-ap-northeast-1.amazonaws.com/garypippi.net/${path}`} />
+    )
+}
+
+const AppPostInlineFragmentVideo = ({ token: { matches: [, path] } }: PropsWithChildren<Props>) => {
+    return (
+        <video src={`https://s3-ap-northeast-1.amazonaws.com/garypippi.net/${path}`} controls />
+    )
+}
+
+const AppPostInlineLink = ({ token: { matches: [text, href] } }: PropsWithChildren<Props>) => {
+    return (
+        <a href={href} className="text-red-600">{text}</a>
     )
 }
 
 const inlineComponents: {[K:string]: FunctionComponent<Props>} = {
     t: AppPostInlineFragmentText,
-    img: AppPostInlineFragmentImage
+    a: AppPostInlineLink,
+    img: AppPostInlineFragmentImage,
+    video: AppPostInlineFragmentVideo
 }
 
 const AppPostParagraph = ({ token }: PropsWithChildren<Props>) => {
@@ -36,9 +51,35 @@ const AppPostParagraph = ({ token }: PropsWithChildren<Props>) => {
     )
 }
 
+const classes: {[K:string]: string} = {
+    '#': '',
+    '##': 'my-6 text-xl md:text-2xl pb-1 border-b',
+    '###': 'my-3 text-lg md:text-xl'
+}
+
+const AppPostHeading = ({ token: { matches: [level, content] } }: PropsWithChildren<Props>) => {
+    return createElement(
+        `h${level.length}`,
+        { className: classes[level] },
+        content
+    )
+}
+
+
+const AppPostFence = ({ token: { matches: [lang, text] } }: PropsWithChildren<Props>) => {
+    return (
+        <pre className="hljs my-3 text-sm md:text-base">
+            <code dangerouslySetInnerHTML={{__html:hljs.highlight(lang || 'bash', text).value}} />
+        </pre>
+    )
+}
+
+
 
 const blockComponents: {[K:string]: FunctionComponent<Props>} = {
-    p: AppPostParagraph
+    p: AppPostParagraph,
+    h: AppPostHeading,
+    fence: AppPostFence
     // h: AppPostDefault,
     // code: AppPostDefault,
     // a: AppPostDefault,
