@@ -1,6 +1,6 @@
 import * as rules from './rules'
 
-type T = 'nl'|'h'|'p'|'t'|'a'|'code'|'fence'
+type T = 'nl'|'h'|'p'|'t'|'a'|'code'|'fence'|'img'
 type U = {type:T,content:string,matches:string[],tokens?:U[]}
 type R = U|null
 type C = RegExpExecArray|null
@@ -30,6 +30,7 @@ export const task: F[][] = [[
     // () => null
 ], [
     s => f(rules.code.exec(s), 'code'),
+    s => f(rules.img.exec(s), 'img'),
     s => f(rules.a.exec(s), 'a'),
     s => f(rules.t.exec(s), 't')
     // s => f(rules.text.exec(s), 'text'),
