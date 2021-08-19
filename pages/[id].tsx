@@ -4,6 +4,7 @@ import { AppHeader } from '../components/AppHeader'
 import { AppFooter } from '../components/AppFooter'
 import { AppPage } from '../components/AppPage'
 import { AppIcon } from '../components/AppIcon'
+import { AppPost } from '../components/AppPost'
 import { mdiClock, mdiTag } from '@mdi/js'
 import { id, getStaticPropsWithInitialState } from '../modules/ss'
 import { Post } from '../types'
@@ -35,6 +36,11 @@ const idPage = ({ post }: Props) => {
                     ))}
                 </div>
                 <div dangerouslySetInnerHTML={{__html: post.body}}></div>
+                <hr className="mt-2" />
+                <hr className="mt-2" />
+                <hr className="mt-2" />
+                <hr className="mt-2" />
+                {lexer(post.rawBody).map((token, key) => <AppPost {...{token,key}}/>)}
             </AppPage>
             <AppFooter />
         </App>

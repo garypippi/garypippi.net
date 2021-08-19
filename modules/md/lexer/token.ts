@@ -1,14 +1,14 @@
 import * as rules from './rules'
 
 type T = 'nl'|'h'|'p'|'t'|'a'|'code'|'fence'|'img'|'strip'
-type U = {type:T,content:string,matches:string[],tokens?:U[]}
+type U = {type:T,content:string,matches:string[],tokens:U[]}
 type R = U|null
 type C = RegExpExecArray|null
 type F = (s: string) => R
 export type Token = U
 export type Tokenizer = F
 
-const f = (c: C, t: T, u?: U[]) => c && ({ type: t, content: c[0], matches: c.slice(1), tokens :u })
+const f = (c: C, t: T, u: U[] = []) => c && ({ type: t, content: c[0], matches: c.slice(1), tokens :u })
 const g = (t: R, u: U[]) => u.length - (t ? u.push(t) : u.length)
 
 export const tick = (t: U[], u: F[], s: string): U[] => {
