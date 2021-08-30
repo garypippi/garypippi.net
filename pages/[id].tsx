@@ -9,7 +9,7 @@ import { mdiClock, mdiTag } from '@mdi/js'
 import { id, getStaticPropsWithInitialState } from '../modules/ss'
 import { Post } from '../types'
 import 'highlight.js/styles/atom-one-dark.css'
-import { lexer } from '../modules/md/lexer'
+import { lexer, _lexer, root } from '../modules/md/lexer'
 // import marked from 'marked'
 
 
@@ -20,7 +20,8 @@ interface Props {
 
 const idPage = ({ post }: Props) => {
     // console.log(post.rawBody)
-    console.log(lexer(post.rawBody))
+    console.log(_lexer(post.rawBody, [root]))
+    // console.log(lexer(post.rawBody))
     // console.log(marked.lexer(post.rawBody))
     return (
         <App>
