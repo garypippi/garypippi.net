@@ -1,1 +1,1 @@
-export const ul = /^((?: *[-*+] ?[^\n]+\n?)+)/
+export const ul = /^(?: *[-*+] [^\n]*(\n|$))+/

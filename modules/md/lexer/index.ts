@@ -5,7 +5,7 @@ export { root }
 export const _lexer = (text: string, task: Tokenizer[], list: Token[] = []): Token[] => {
     // console.log(list)
     return _tick(list, task, text)
-        .filter(tk => tk.content.trim().length > 0)
+        // .filter(tk => tk.content.trim().length > 0)
         .map(token => {
             return {
                 ...token,

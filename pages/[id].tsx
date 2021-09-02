@@ -9,7 +9,7 @@ import { mdiClock, mdiTag } from '@mdi/js'
 import { id, getStaticPropsWithInitialState } from '../modules/ss'
 import { Post } from '../types'
 import 'highlight.js/styles/atom-one-dark.css'
-import { lexer, _lexer, root } from '../modules/md/lexer'
+import { _lexer as mdParse, root } from '../modules/md/lexer'
 // import marked from 'marked'
 
 
@@ -19,10 +19,7 @@ interface Props {
 
 
 const idPage = ({ post }: Props) => {
-    // console.log(post.rawBody)
-    console.log(_lexer(post.rawBody, [root]))
-    // console.log(lexer(post.rawBody))
-    // console.log(marked.lexer(post.rawBody))
+    console.log(mdParse(post.rawBody, [root]))
     return (
         <App>
             <AppHeader title={post.attr.title}>garypippi.net</AppHeader>
@@ -41,7 +38,14 @@ const idPage = ({ post }: Props) => {
                 <hr className="mt-2" />
                 <hr className="mt-2" />
                 <hr className="mt-2" />
-                {lexer(post.rawBody).map((token, key) => <AppPost {...{token,key}}/>)}
+                {mdParse(post.rawBody, [root]).map((token, key) => {
+                    return (
+                        <AppPost
+                            key={key}
+                            token={token}
+                        />
+                    )
+                })}
             </AppPage>
             <AppFooter />
         </App>
