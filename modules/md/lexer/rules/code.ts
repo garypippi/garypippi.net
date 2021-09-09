@@ -1,1 +1,1 @@
-export const code = /^(?<=`)`([^`]*)`(?!`)/
+export const code = /^(?<!`)`([^`]+)`(?!`)/

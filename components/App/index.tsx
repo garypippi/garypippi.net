@@ -1,9 +1,9 @@
 import { PropsWithChildren } from 'react'
 
-export const App = (props: PropsWithChildren<{}>) => {
+export const App = ({ children }: PropsWithChildren<{}>) => {
     return (
         <div className="container mx-auto">
-            {props.children}
+            {children}
         </div>
     )
 }

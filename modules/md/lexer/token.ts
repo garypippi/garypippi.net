@@ -74,9 +74,8 @@ const ul: F = s => {
 
 export const root: F = s => f(/[^]*/.exec(s), 'root', [], [
     s => f(rules.nl.exec(s), 'nl'),
-    s => f(rules.fence.exec(s), 'fence', [], [
-        s => f(rules.code.exec(s), 'code')
-    ]),
+    s => f(rules.fence.exec(s), 'fence'),//, [], [
+    // ]),
     ul,
     // s => f(rules.ul.exec(s), 'ul'),
     s => f(rules.h.exec(s), 'h'),

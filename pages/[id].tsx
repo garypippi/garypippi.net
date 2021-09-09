@@ -10,7 +10,6 @@ import { id, getStaticPropsWithInitialState } from '../modules/ss'
 import { Post } from '../types'
 import 'highlight.js/styles/atom-one-dark.css'
 import { _lexer as mdParse, root } from '../modules/md/lexer'
-// import marked from 'marked'
 
 
 interface Props {
@@ -19,7 +18,6 @@ interface Props {
 
 
 const idPage = ({ post }: Props) => {
-    console.log(mdParse(post.rawBody, [root]))
     return (
         <App>
             <AppHeader title={post.attr.title}>garypippi.net</AppHeader>
@@ -33,11 +31,6 @@ const idPage = ({ post }: Props) => {
                         <span className="text-xs rounded bg-gray-100 px-2 py-1 mr-2" key={i}>{tag}</span>
                     ))}
                 </div>
-                <div dangerouslySetInnerHTML={{__html: post.body}}></div>
-                <hr className="mt-2" />
-                <hr className="mt-2" />
-                <hr className="mt-2" />
-                <hr className="mt-2" />
                 {mdParse(post.rawBody, [root]).map((token, key) => {
                     return (
                         <AppPost

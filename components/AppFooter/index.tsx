@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { AppIcon } from './AppIcon'
-import { useSnsLinks } from '../modules/store'
+import { AppIcon } from '../AppIcon'
+import { useSnsLinks } from '../../modules/store'
 
 export const AppFooter = () => {
     return (

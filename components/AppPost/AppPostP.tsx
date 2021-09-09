@@ -2,6 +2,9 @@ import { Component } from './types'
 import { render } from './render'
 import { AppPostT } from './AppPostT'
 import { AppPostImage } from './AppPostImage'
+import { AppPostVideo } from './AppPostVideo'
+import { AppPostCode } from './AppPostCode'
+import { AppPostLink } from './AppPostLink'
 
 export const AppPostP: Component = ({ token: { tokens } }) => {
     return (
@@ -9,7 +12,10 @@ export const AppPostP: Component = ({ token: { tokens } }) => {
             {tokens.map((token, key) => {
                 return render(token, key, {
                     t: AppPostT,
-                    img: AppPostImage
+                    img: AppPostImage,
+                    video: AppPostVideo,
+                    code: AppPostCode,
+                    a: AppPostLink
                 })
             })}
         </p>
