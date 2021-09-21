@@ -1,6 +1,6 @@
 import * as rules from './rules'
 
-type T = 'root'|'nl'|'h'|'p'|'t'|'a'|'video'|'code'|'fence'|'img'|'strip'|'ul'|'li'|'bullet'|'last'
+type T = 'root'|'nl'|'h'|'p'|'t'|'a'|'video'|'code'|'fence'|'img'|'ul'|'li'|'bullet'|'last'
 type U = {type:T,content:string,matches:string[],tokens:U[],tokenizers:F[]}
 type R = U|null
 type C = RegExpExecArray|null
