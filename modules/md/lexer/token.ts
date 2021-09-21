@@ -11,26 +11,9 @@ export type Tokenizer = F
 const f = (c: C, t: T, u: U[] = [], f: F[] = []) => c && ({ type: t, content: c[0], matches: c.slice(1), tokens: u, tokenizers: f })
 const g = (t: R, u: U[]) => u.length - (t ? u.push(t) : u.length)
 
-export const _tick = (t: U[], k: F[], s: string): U[] => {
+export const tick = (t: U[], k: F[], s: string): U[] => {
     return s.length > 0 && k.length > 0
-        ? _tick(t, k, k.reduce((s, p) => g(p(s), t) ? s.substring(t[t.length-1].content.length) : s, s))
-        : t
-}
-
-export const _tuck = (t: U[], k: F[], s: string): U[] => {
-    return s.length > 0
-        ? _tick(t, k, s)
-        : t
-}
-
-export const tick = (t: U[], u: F[], s: string): U[] => {
-    return u.some(f => g(f(s), t))
-        ? tuck(t, u, s.substring(t[t.length-1].content.length))
-        : t
-}
-export const tuck = (t: U[], u: F[], s: string): U[] => {
-    return s.length > 0
-        ? tick(t, u, s)
+        ? tick(t, k, k.reduce((s, p) => g(p(s), t) ? s.substring(t[t.length-1].content.length) : s, s))
         : t
 }
 
