@@ -19,8 +19,6 @@ interface Props {
 
 const idPage = ({ post }: Props) => {
 
-    console.log(mdParse(post.rawBody, [root]))
-
     return (
         <App>
             <AppHeader title={post.attr.title}>garypippi.net</AppHeader>
