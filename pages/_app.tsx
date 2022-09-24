@@ -6,7 +6,7 @@ import { useGtag, GtagFn } from '../components/GoogleAnalytics'
 
 declare var gtag: GtagFn|undefined
 
-const App = ({ Component, pageProps }: AppProps) => {
+const App = ({ Component, pageProps }: AppProps<any>) => {
     useGtag(typeof gtag == 'function' && gtag)
     return (
         <Provider store={useStore(pageProps.initialState)}>
