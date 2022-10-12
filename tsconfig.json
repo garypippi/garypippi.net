@@ -1,6 +1,12 @@
 {
-  "include": ["./pages", "./components", "./modules"],
-  "exclude": ["node_modules"],
+  "include": [
+    "./pages",
+    "./components",
+    "./modules"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
   "compilerOptions": {
     "baseUrl": ".",
     "strict": true,
@@ -17,9 +23,12 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "lib": ["DOM", "ESNext"]
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
+    "incremental": true
   }
 }

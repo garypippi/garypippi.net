@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "test": "jest",
-    "pippi": "ts-node --dir ./cli ./index.ts"
+    "pippi": "ts-node --dir ./cli ./index.ts",
+    "export": "next export"
   },
   "repository": {
     "type": "git",
