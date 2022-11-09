@@ -1,53 +1,83 @@
-import { GetStaticProps, GetStaticPaths } from 'next'
+import { GetStaticProps, GetStaticPaths, NextPage } from 'next'
 import { App } from '../components/App'
-import { AppHeader } from '../components/AppHeader'
-import { AppFooter } from '../components/AppFooter'
-import { AppPage } from '../components/AppPage'
-import { AppIcon } from '../components/AppIcon'
-import { mdiClock, mdiTag } from '@mdi/js'
-import { id, getStaticPropsWithInitialState } from '../modules/ss'
-import { Post } from '../types'
 import 'highlight.js/styles/atom-one-dark.css'
-
+import { AppMarkdown } from '../components/AppMarkdown'
+import { join, basename } from 'path'
+import { Root } from 'mdast'
+import { getPaths } from '../modules/markdown/getPaths'
+import { getMdast } from '../modules/markdown/getMdast'
+import { getEntry } from '../modules/markdown/getEntry'
+import { Attribute } from '../modules/markdown/types'
+import { format } from 'date-fns'
+import { css } from 'goober'
+import { theme } from '../modules/csstheme'
 
 interface Props {
-    post: Post
+    attr: Attribute
+    root: Root
 }
 
-
-const idPage = ({ post }: Props) => (
-    <App>
-        <AppHeader title={post.attr.title}>garypippi.net</AppHeader>
-        <AppPage size="lg">
-            <h1 className="text-3xl">{post.attr.title}</h1>
-            <div className="flex flex-row justify-start items-center mt-2">
-                <AppIcon size={16} className="text-gray-500 mr-2">{mdiClock}</AppIcon>
-                <span>{post.attr.date}</span>
-                <AppIcon size={16} className="text-gray-500 ml-2 mr-2">{mdiTag}</AppIcon>
-                {post.attr.tags.map((tag, i) => (
-                    <span className="text-xs rounded bg-gray-100 px-2 py-1 mr-2" key={i}>{tag}</span>
-                ))}
-            </div>
-            <div dangerouslySetInnerHTML={{__html: post.body}}></div>
-        </AppPage>
-        <AppFooter />
-    </App>
-)
-
-export default idPage
+const dir = join(process.cwd(), 'blog')
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    return {
-        fallback: false,
-        paths: await id.getStaticPaths()
-    }
+    return getPaths(dir).then(paths => ({
+        paths: paths.map(path => `/${basename(path).replace('.md', '')}`),
+        fallback: false
+    }))
 }
 
-export const getStaticProps: GetStaticProps<Props> = async ctx => {
-    return id.getStaticProps(ctx.params?.id as string).then(post => {
-        return ! post
-            ? { notFound: true }
-            : { props: getStaticPropsWithInitialState({ post }) }
+export const getStaticProps: GetStaticProps<Props,{id:string}> = async ({ params }) => {
+    return getPaths(dir).then(async paths => {
+        return getEntry(paths.find(path => path.includes(params?.id || '')) || '').then(async entry => {
+            return getMdast(entry.body).then(root => {
+                return {
+                    props: {
+                        attr: entry.attr,
+                        root
+                    }
+                }
+            })
+        })
     })
 }
 
+const idPage: NextPage<Props> = ({ attr, root }) => {
+    return (
+        <App>
+            <div className={css`
+                margin-bottom: 20px;
+            `}>
+                <h1 className={css`
+                    font-size: 28px;
+                    font-weight: normal;
+                    margin-bottom: 8px;
+                    color: ${theme.color.text};
+                `}>
+                    {attr.title}
+                </h1>
+                <span className={css`
+                    font-size: 16px;
+                    color: ${theme.color.text};
+                `}>
+                    {format(new Date(attr.date), 'yyyy/MM/dd HH:mm')}
+                </span>
+                {attr.tags.map((tag, i) => (
+                    <span
+                        key={i}
+                        className={css`
+                        font-size: 14px;
+                        padding: 2px 4px;
+                        margin-left: 4px;
+                        color: ${theme.color.text};
+                        background-color: ${theme.color.tag};
+                    `}>
+                        {tag}
+                    </span>
+                ))}
+            </div>
+            <AppMarkdown node={root} />
+        </App>
+    )
+}
+
+export default idPage

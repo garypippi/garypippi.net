@@ -1,20 +1,34 @@
-import Document, { Html, Head, Main, NextScript } from 'next/document'
-import { GoogleAnalytics } from '../components/GoogleAnalytics'
+import { DocumentContext, Html, Head, Main, NextScript } from 'next/document'
+import { NextPage } from 'next'
+import { extractCss } from 'goober'
 
-const GOOGLE_ANALYTICS_ID = process.env.GOOGLE_ANALYTICS_ID
+interface Props {
+    css: string
+}
 
-export default class AppDocument extends Document {
-    render() {
-        return (
-            <Html>
-                <Head>
-                    <GoogleAnalytics id={GOOGLE_ANALYTICS_ID} />
-                </Head>
-                <body>
-                    <Main />
-                    <NextScript />
-                </body>
-            </Html>
-        )
+const Document: NextPage<Props> = ({ css }: Props) => {
+    return (
+        <Html>
+            <Head>
+                <style
+                    id="_goobar"
+                    dangerouslySetInnerHTML={{
+                        __html: css
+                    }}/>
+            </Head>
+            <body>
+                <Main />
+                <NextScript />
+            </body>
+        </Html>
+    )
+}
+
+Document.getInitialProps = async (context: DocumentContext) => {
+    return {
+        ... await context.renderPage(),
+        css: extractCss()
     }
 }
+
+export default Document

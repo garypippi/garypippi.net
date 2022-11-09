@@ -1,5 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AppPage.tsx should render lg 1`] = `"<div class=\\"2xl:px-64 xl:px-48 lg:px-16 md:px-8 px-4\\">hoge</div>"`;
+exports[`AppPage.tsx should render lg 1`] = `"<div class="2xl:px-64 xl:px-48 lg:px-16 md:px-8 px-4">hoge</div>"`;
 
-exports[`AppPage.tsx should render md 1`] = `"<div class=\\"2xl:px-96 xl:px-64 lg:px-48 md:px-16 px-4\\">hoge</div>"`;
+exports[`AppPage.tsx should render md 1`] = `"<div class="2xl:px-96 xl:px-64 lg:px-48 md:px-16 px-4">hoge</div>"`;

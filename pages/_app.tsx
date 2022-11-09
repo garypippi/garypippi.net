@@ -1,17 +1,21 @@
-import 'tailwindcss/tailwind.css'
+import { createElement } from 'react'
 import { AppProps } from 'next/app'
-import { Provider } from 'react-redux'
-import { useStore } from '../modules/store'
-import { useGtag, GtagFn } from '../components/GoogleAnalytics'
+import { setup } from 'goober'
+import { prefix } from 'goober/prefixer'
+import { createGlobalStyles } from 'goober/global'
 
-declare var gtag: GtagFn|undefined
+setup(createElement, prefix)
+
+const GlobalStyles = createGlobalStyles`
+    * { margin: 0; padding: 0; }
+`
 
 const App = ({ Component, pageProps }: AppProps<any>) => {
-    useGtag(typeof gtag == 'function' && gtag)
     return (
-        <Provider store={useStore(pageProps.initialState)}>
+        <>
+            <GlobalStyles />
             <Component {...pageProps}/>
-        </Provider>
+        </>
     )
 }
 

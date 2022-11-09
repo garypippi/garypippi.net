@@ -30,15 +30,11 @@ jobs:
                   SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
                   SSH_USER: ${{ secrets.SSH_USER }}
                   SSH_HOST: ${{ secrets.SSH_HOST }}
+                  S3_HOST: ${{ secrets.S3_HOST }}
                   S3_PATH: ${{ secrets.S3_PATH }}
-                  SNS_TWITTER_URL: ${{ secrets.SNS_TWITTER_URL }}
-                  SNS_GITHUB_URL: ${{ secrets.SNS_GITHUB_URL }}
-                  GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
               run: |
-                  echo "S3_PATH=$S3_PATH" >> .env.local
-                  echo "SNS_TWITTER_URL=$SNS_TWITTER_URL" >> .env.local
-                  echo "SNS_GITHUB_URL=$SNS_GITHUB_URL" >> .env.local
-                  echo "GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID" >> .env.local
+                  echo "NEXT_PUBLIC_S3_HOST=$S3_HOST" >> .env.local
+                  echo "NEXT_PUBLIC_S3_PATH=$S3_PATH" >> .env.local
                   git submodule init
                   git submodule update
                   npm ci
