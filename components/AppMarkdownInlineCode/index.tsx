@@ -1,6 +1,6 @@
 import { InlineCode } from 'mdast'
 import { css } from 'goober'
-import { theme } from '../../modules/csstheme'
+import { color } from '../../modules/css'
 
 interface Props {
     node: InlineCode
@@ -11,7 +11,7 @@ export const AppMarkdownInlineCode = ({ node }: Props) => {
         <code className={css`
             font-weight: normal;
             background-color: #EFF5F5;
-            color: ${theme.color.text};
+            color: ${color['grey-5']};
         `}>
             {node.value}
         </code>

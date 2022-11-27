@@ -1,7 +1,7 @@
 import { Link } from 'mdast'
 import { AppMarkdown } from '../AppMarkdown'
 import { css } from 'goober'
-import { theme } from '../../modules/csstheme'
+import { color } from '../../modules/css'
 
 interface Props {
     node: Link
@@ -12,7 +12,7 @@ export const AppMarkdownLink = ({ node }: Props) => {
         <a
             href={node.url}
             className={css`
-                color: ${theme.color.link};
+                color: ${color['grey-1']};
         `}>
             {node.children.map((node, i) => (
                 <AppMarkdown

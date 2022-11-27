@@ -1,7 +1,7 @@
 import { ListItem } from 'mdast'
 import { AppMarkdown } from '../AppMarkdown'
 import { css } from 'goober'
-import { theme } from '../../modules/csstheme'
+import { color } from '../../modules/css'
 
 interface Props {
     node: ListItem
@@ -15,7 +15,7 @@ export const AppMarkdownListItem = ({ node }: Props) => {
         return (
             <li className={css`
                 font-size: 16px;
-                color: ${theme.color.text};
+                color: ${color['grey-5']};
             `}>
                 {child.children.map((node, i) => (
                     <AppMarkdown

@@ -1,7 +1,7 @@
 import { Paragraph } from 'mdast'
 import { AppMarkdown } from '../AppMarkdown'
 import { css } from 'goober'
-import { theme } from '../../modules/csstheme'
+import { color } from '../../modules/css'
 
 interface Props {
     node: Paragraph
@@ -12,7 +12,7 @@ export const AppMarkdownParagraph = ({ node }: Props) => {
         <p className={css`
             font-size: 16px;
             margin: 10px 0;
-            color: ${theme.color.text};
+            color: ${color['grey-5']};
         `}>
             {node.children.map((node, i) => (
                 <AppMarkdown

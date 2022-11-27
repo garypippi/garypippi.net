@@ -1,34 +1,36 @@
-import { join } from 'path'
 import { GetStaticProps, NextPage } from 'next'
-import { App } from '../components/App'
+import { css } from 'goober'
+import { getEnv } from '../modules/env'
 import { getPaths } from '../modules/markdown/getPaths'
 import { getEntry } from '../modules/markdown/getEntry'
 import { Entry } from '../modules/markdown/types'
-import { AppEntry } from '../components/AppEntry'
-
-const path = join(process.cwd(), 'blog')
+import { App } from '../components/App'
+import { AppMe } from '../components/AppMe'
+import { AppBlogEntries } from '../components/AppBlogEntries'
 
 interface Props {
-    entries: Entry[]
+    entries: Omit<Entry,'body'>[]
 }
 
-const TopPage: NextPage<Props> = ({ entries }) => {
+const indexPage: NextPage<Props> = ({ entries }) => {
     return (
         <App>
-            {entries.map((entry, i) => (
-                <AppEntry
-                    key={i}
-                    entry={entry}/>
-            ))}
+            <AppMe
+                className={css`
+                    margin-bottom: 80px;
+            `}/>
+            <AppBlogEntries
+                entries={entries}/>
         </App>
     )
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-    return getPaths(path)
+    return getPaths(getEnv().blog)
         .then(paths => Promise.all(paths.map(path => getEntry(path))))
+        .then(entries => entries.map(({ attr, href }) => ({ attr, href })))
         .then(entries => ({ props: { entries } }))
 }
 
 
-export default TopPage
+export default indexPage
