@@ -1,5 +1,6 @@
 import { GetStaticProps, NextPage } from 'next'
 import { css } from 'goober'
+import { lg } from '../modules/css'
 import { getEnv } from '../modules/env'
 import { getPaths } from '../modules/markdown/getPaths'
 import { getEntry } from '../modules/markdown/getEntry'
@@ -18,6 +19,9 @@ const indexPage: NextPage<Props> = ({ entries }) => {
             <AppMe
                 className={css`
                     margin-bottom: 80px;
+                    @media screen and (max-width: ${lg}px) {
+                        margin-bottom: 20px;
+                    }
             `}/>
             <AppBlogEntries
                 entries={entries}/>

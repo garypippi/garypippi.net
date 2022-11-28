@@ -25,7 +25,7 @@ export const getEntry = async (path: string): Promise<Entry> => {
             // parse toml
             const attr = toml.parse(regExpResultArray[1])
             // create relative link
-            const href = basename(path).replace(/\.md$/, '')
+            const href = '/' + basename(path).replace(/\.md$/, '')
             // convert date to iso
             attr.date = formatISO(new Date(attr.date))
             // resolves to Entry object

@@ -46,6 +46,9 @@ const idPage: NextPage<Props> = ({ attr, root }) => {
         <App className={css`
             max-width: ${md}px;
             margin: 0 auto;
+            @media screen and (min-width: ${md}px){
+                max-width: 100%;
+            }
         `}>
             <div className={css`
                 margin-bottom: 20px;
@@ -67,7 +70,7 @@ const idPage: NextPage<Props> = ({ attr, root }) => {
                 {attr.tags.map((tag, i) => (
                     <Link
                         key={i}
-                        href=""
+                        href={`/tags/${tag}`}
                         className={css`
                             font-size: 16px;
                             margin-left: 4px;

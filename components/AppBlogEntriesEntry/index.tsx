@@ -38,7 +38,7 @@ export const AppBlogEntriesEntry = ({ className = '', entry: { href, attr } }: P
             {attr.tags.map((tag, i) => (
                 <Link
                     key={i}
-                    href=""
+                    href={`/tags/${tag}`}
                     className={css`
                         font-size: 16px;
                         margin-left: 4px;
