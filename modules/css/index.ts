@@ -9,3 +9,7 @@ export const color = {
     'grey-5': '#222222',
     'grey-6': '#393E46'
 }
+
+export const mergeClass = (className: string|undefined = '', cssClass: string = '') => {
+    return `${className ? className + ' ' : ''}${cssClass}`
+}

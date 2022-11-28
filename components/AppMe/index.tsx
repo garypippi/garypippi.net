@@ -1,8 +1,8 @@
 import { css } from 'goober'
 import { getEnv } from '../../modules/env'
-import { color, md } from '../../modules/css'
+import { color, md, mergeClass } from '../../modules/css'
 
-const name = getEnv().name
+const { name } = getEnv()
 
 interface Props {
     className?: string
@@ -10,11 +10,11 @@ interface Props {
 
 export const AppMe = ({ className }: Props) => {
     return (
-        <div className={className + ' ' + css`
+        <div className={mergeClass(className, css`
             max-width: ${md}px;
             margin-right: auto;
             margin-left: auto;
-        `}>
+        `)}>
             <h2 className={css`
                 font-weight: normal;
                 font-size: 22px;

@@ -1,15 +1,15 @@
 import { Image } from 'mdast'
 import { css } from 'goober'
+import { getEnv } from '../../modules/env'
 
 interface Props {
     node: Image
 }
 
-const host = process.env.NEXT_PUBLIC_S3_HOST
-const path = process.env.NEXT_PUBLIC_S3_PATH
+const { s3 } = getEnv()
 
 const createSrc = (url: string) => {
-    return `https://${host}${path}${url}`
+    return `https://${s3.host}${s3.path}768x/${url}`
 }
 
 export const AppMarkdownImage = ({ node }: Props) => {
