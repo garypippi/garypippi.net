@@ -46,7 +46,7 @@ const idPage: NextPage<Props> = ({ attr, root }) => {
         <App className={css`
             max-width: ${md}px;
             margin: 0 auto;
-            @media screen and (min-width: ${md}px){
+            @media screen and (max-width: ${md}px){
                 max-width: 100%;
             }
         `}>
