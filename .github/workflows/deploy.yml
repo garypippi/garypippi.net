@@ -32,9 +32,17 @@ jobs:
                   SSH_HOST: ${{ secrets.SSH_HOST }}
                   S3_HOST: ${{ secrets.S3_HOST }}
                   S3_PATH: ${{ secrets.S3_PATH }}
+                  MY_NAME: ${{ secrets.MY_NAME }}
+                  BLOG_PATH: ${{ secrets.BLOG_PATH }}
+                  URL_GITHUB: ${{ secrets.URL_GITHUB }}
+                  URL_TWITTER: ${{ secrets.URL_TWITTER }}
               run: |
                   echo "NEXT_PUBLIC_S3_HOST=$S3_HOST" >> .env.local
                   echo "NEXT_PUBLIC_S3_PATH=$S3_PATH" >> .env.local
+                  echo "NEXT_PUBLIC_MY_NAME=$MY_NAME" >> .env.local
+                  echo "NEXT_PUBLIC_BLOG_PATH=$BLOG_PATH" >> .env.local
+                  echo "NEXT_PUBLIC_GITHUB=$URL_GITHUB" >> .env.local
+                  echo "NEXT_PUBLIC_TWITTER=$URL_TWITTER" >> .env.local
                   git submodule init
                   git submodule update
                   npm ci
