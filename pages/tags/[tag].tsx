@@ -1,4 +1,5 @@
 import { GetStaticProps, GetStaticPaths, NextPage } from 'next'
+import Head from 'next/head'
 import { css } from 'goober'
 import { getEnv } from '../../modules/env'
 import { getPaths } from '../../modules/markdown/getPaths'
@@ -15,6 +16,9 @@ interface Props {
 const indexPage: NextPage<Props> = ({ entries }) => {
     return (
         <App>
+            <Head>
+                <title>{getEnv().title}</title>
+            </Head>
             <AppMe
                 className={css`
                     margin-bottom: 80px;

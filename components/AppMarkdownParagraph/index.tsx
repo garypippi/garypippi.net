@@ -11,7 +11,7 @@ export const AppMarkdownParagraph = ({ node }: Props) => {
     return (
         <p className={css`
             font-size: 16px;
-            margin: 10px 0;
+            margin: 16px 0;
             color: ${color['grey-5']};
         `}>
             {node.children.map((node, i) => (

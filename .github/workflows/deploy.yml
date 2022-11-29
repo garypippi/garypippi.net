@@ -32,6 +32,7 @@ jobs:
                   SSH_HOST: ${{ secrets.SSH_HOST }}
                   S3_HOST: ${{ secrets.S3_HOST }}
                   S3_PATH: ${{ secrets.S3_PATH }}
+                  SITE_TITLE: ${{ secrets.SITE_TITLE }}
                   MY_NAME: ${{ secrets.MY_NAME }}
                   BLOG_PATH: ${{ secrets.BLOG_PATH }}
                   URL_GITHUB: ${{ secrets.URL_GITHUB }}
@@ -43,6 +44,7 @@ jobs:
                   echo "NEXT_PUBLIC_BLOG_PATH=$BLOG_PATH" >> .env.local
                   echo "NEXT_PUBLIC_GITHUB=$URL_GITHUB" >> .env.local
                   echo "NEXT_PUBLIC_TWITTER=$URL_TWITTER" >> .env.local
+                  echo "NEXT_PUBLIC_TITLE=$SITE_TITLE" >> .env.local
                   git submodule init
                   git submodule update
                   npm ci

@@ -7,7 +7,8 @@ import { createGlobalStyles } from 'goober/global'
 setup(createElement, prefix)
 
 const GlobalStyles = createGlobalStyles`
-    * { margin: 0; padding: 0; box-sizing: border-box; word-break: break-all; }
+    * { margin: 0; padding: 0; box-sizing: border-box; word-break: break-word; }
+    html,body { background: #FAFAFA; }
 `
 
 const App = ({ Component, pageProps }: AppProps<any>) => {

@@ -3,6 +3,7 @@
   "include": ["./**/*"],
   "compilerOptions": {
     "noEmit": false,
-    "incremental": false
+    "incremental": false,
+    "module": "ESNext"
   }
 }

@@ -1,4 +1,5 @@
 import { GetStaticProps, GetStaticPaths, NextPage } from 'next'
+import Head from 'next/head'
 import { App } from '../components/App'
 import 'highlight.js/styles/atom-one-dark.css'
 import { AppMarkdown } from '../components/AppMarkdown'
@@ -50,8 +51,11 @@ const idPage: NextPage<Props> = ({ attr, root }) => {
                 max-width: 100%;
             }
         `}>
+            <Head>
+                <title>{attr.title}</title>
+            </Head>
             <div className={css`
-                margin-bottom: 20px;
+                margin-bottom: 40px;
             `}>
                 <h1 className={css`
                     font-size: 28px;

@@ -1,4 +1,5 @@
 import { GetStaticProps, NextPage } from 'next'
+import Head from 'next/head'
 import { css } from 'goober'
 import { lg } from '../modules/css'
 import { getEnv } from '../modules/env'
@@ -16,6 +17,9 @@ interface Props {
 const indexPage: NextPage<Props> = ({ entries }) => {
     return (
         <App>
+            <Head>
+                <title>{getEnv().title}</title>
+            </Head>
             <AppMe
                 className={css`
                     margin-bottom: 80px;

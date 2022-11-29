@@ -1,5 +1,6 @@
 import { List } from 'mdast'
 import { AppMarkdown } from 'components/AppMarkdown'
+import { css } from 'goober'
 
 interface Props {
     node: List
@@ -7,7 +8,9 @@ interface Props {
 
 export const AppMarkdownList = ({ node }: Props) => {
     return (
-        <ul>
+        <ul className={css`
+            padding-left: 20px;
+        `}>
             {node.children.map((node, i) => (
                 <AppMarkdown
                     key={i}

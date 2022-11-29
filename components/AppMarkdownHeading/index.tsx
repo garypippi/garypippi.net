@@ -10,15 +10,15 @@ const classMap: {[depth in Heading['depth']]:string} = {
     1: css`
     `,
     2: css`
-        font-size: 22px;
+        font-size: 24px;
         font-weight: normal;
-        margin: 20px 0 10px 0;
+        margin: 26px 0;
         color: #3C4048;
     `,
     3: css`
         font-size: 20px;
         font-weight: normal;
-        margin: 20px 0 10px 0;
+        margin: 20px 0;
         color: #3C4048;
     `,
     4: css`
