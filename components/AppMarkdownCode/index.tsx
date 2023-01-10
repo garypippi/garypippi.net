@@ -15,6 +15,7 @@ export const AppMarkdownCode = ({ node }: Props) => {
 
     return (
         <pre className={mergeClass("hljs", css`
+            margin: 20px 0;
             padding: 10px;
         `)}>
             <code dangerouslySetInnerHTML={{__html}}/>
