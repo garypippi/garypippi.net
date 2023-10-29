@@ -1,25 +1,19 @@
 import { Video } from '../../modules/markdown/types'
 import { css } from 'goober'
-import { getEnv } from '../../modules/env'
+import { VIDEO_PATH } from '../../modules/env'
 
 interface Props {
     node: Video
 }
 
-const { s3 } = getEnv()
-
-const createSrc = (url: string) => {
-    return `http://${s3.host}${s3.path}${url}`
-}
-
-export const AppMarkdownVideo = ({ node }: Props) => {
+export const AppMarkdownVideo = ({ node: { url } }: Props) => {
     return (
         <video
-            src={createSrc(node.url)}
+            src={`${VIDEO_PATH}${url}`}
             controls
             className={css`
                 max-width: 100%;
                 margin: 10px 0;
-        `}/>
+        `} />
     )
 }

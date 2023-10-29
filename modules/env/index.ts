@@ -1,15 +1,7 @@
-import { join } from 'path'
-
-export const getEnv = () => {
-    return {
-        title: process.env.NEXT_PUBLIC_TITLE || 'Example title',
-        name: process.env.NEXT_PUBLIC_MY_NAME || 'Example Name',
-        blog: join(process.cwd(), process.env.NEXT_PUBLIC_BLOG_PATH || ''),
-        github: process.env.NEXT_PUBLIC_GITHUB || '/',
-        twitter: process.env.NEXT_PUBLIC_TWITTER || '/',
-        s3: {
-            host: process.env.NEXT_PUBLIC_S3_HOST || '',
-            path: process.env.NEXT_PUBLIC_S3_PATH || ''
-        }
-    }
-}
+export const SITE_TITLE = process.env.NEXT_PUBLIC_SITE_TITLE ?? ''
+export const BLOG_PATH = process.env.BLOG_PATH ?? ''
+export const IMAGE_PATH = process.env.NEXT_PUBLIC_IMAGE_PATH ?? ''
+export const VIDEO_PATH = process.env.NEXT_PUBLIC_VIDEO_PATH ?? ''
+export const NAME = process.env.NEXT_PUBLIC_NAME ?? ''
+export const TWITTER = process.env.NEXT_PUBLIC_TWITTER ?? ''
+export const GITHUB = process.env.NEXT_PUBLIC_GITHUB ?? ''

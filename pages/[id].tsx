@@ -5,7 +5,7 @@ import 'highlight.js/styles/atom-one-dark.css'
 import { AppMarkdown } from '../components/AppMarkdown'
 import { basename } from 'path'
 import { Root } from 'mdast'
-import { getEnv } from '../modules/env'
+import { BLOG_PATH } from '../modules/env'
 import { getPaths } from '../modules/markdown/getPaths'
 import { getMdast } from '../modules/markdown/getMdast'
 import { getEntry } from '../modules/markdown/getEntry'
@@ -21,14 +21,14 @@ interface Props {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    return getPaths(getEnv().blog).then(paths => ({
+    return getPaths(BLOG_PATH).then(paths => ({
         paths: paths.map(path => `/${basename(path).replace('.md', '')}`),
         fallback: false
     }))
 }
 
-export const getStaticProps: GetStaticProps<Props,{id:string}> = async ({ params }) => {
-    return getPaths(getEnv().blog).then(async paths => {
+export const getStaticProps: GetStaticProps<Props, { id: string }> = async ({ params }) => {
+    return getPaths(BLOG_PATH).then(async paths => {
         return getEntry(paths.find(path => path.includes(params?.id || '')) || '').then(async entry => {
             return getMdast(entry.body).then(root => {
                 return {

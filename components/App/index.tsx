@@ -2,9 +2,10 @@ import { PropsWithChildren } from 'react'
 import Link from 'next/link'
 import { css } from 'goober'
 import { color, lg, md, mergeClass } from '../../modules/css'
-import { getEnv } from '../../modules/env'
+import { GITHUB, TWITTER } from '../../modules/env'
 
-const { github, twitter } = getEnv()
+const github = `https://github.com/${GITHUB}`
+const twitter = `https://twitter.com/${TWITTER}`
 
 interface Props {
     className?: string

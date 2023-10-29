@@ -1,8 +1,6 @@
 import { css } from 'goober'
-import { getEnv } from '../../modules/env'
+import { NAME } from '../../modules/env'
 import { color, md, mergeClass } from '../../modules/css'
-
-const { name } = getEnv()
 
 interface Props {
     className?: string
@@ -21,7 +19,7 @@ export const AppMe = ({ className }: Props) => {
                 margin-bottom: 10px;
                 color: ${color['grey-5']};
             `}>
-                {name}
+                {NAME}
             </h2>
             <div className={css`
                 padding-left: 1px;
