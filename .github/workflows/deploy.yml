@@ -25,33 +25,20 @@ jobs:
               with:
                 cache: 'npm'
             - name: Deploy
-              env:
-                  SSH_KEY: ${{ secrets.SSH_KEY }}
-                  SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-                  SSH_USER: ${{ secrets.SSH_USER }}
-                  SSH_HOST: ${{ secrets.SSH_HOST }}
-                  S3_HOST: ${{ secrets.S3_HOST }}
-                  S3_PATH: ${{ secrets.S3_PATH }}
-                  SITE_TITLE: ${{ secrets.SITE_TITLE }}
-                  MY_NAME: ${{ secrets.MY_NAME }}
-                  BLOG_PATH: ${{ secrets.BLOG_PATH }}
-                  URL_GITHUB: ${{ secrets.URL_GITHUB }}
-                  URL_TWITTER: ${{ secrets.URL_TWITTER }}
               run: |
-                  echo "NEXT_PUBLIC_S3_HOST=$S3_HOST" >> .env.local
-                  echo "NEXT_PUBLIC_S3_PATH=$S3_PATH" >> .env.local
-                  echo "NEXT_PUBLIC_MY_NAME=$MY_NAME" >> .env.local
-                  echo "NEXT_PUBLIC_BLOG_PATH=$BLOG_PATH" >> .env.local
-                  echo "NEXT_PUBLIC_GITHUB=$URL_GITHUB" >> .env.local
-                  echo "NEXT_PUBLIC_TWITTER=$URL_TWITTER" >> .env.local
-                  echo "NEXT_PUBLIC_TITLE=$SITE_TITLE" >> .env.local
-                  git submodule init
-                  git submodule update
+                  echo "NEXT_PUBLIC_SITE_TITLE=${{ vars.NEXT_PUBLIC_SITE_TITLE }}" >> .env.local
+                  echo "NEXT_PUBLIC_VIDEO_PATH=${{ vars.NEXT_PUBLIC_VIDEO_PATH }}" >> .env.local
+                  echo "NEXT_PUBLIC_IMAGE_PATH=${{ vars.NEXT_PUBLIC_IMAGE_PATH }}" >> .env.local
+                  echo "NEXT_PUBLIC_NAME=${{ vars.NEXT_PUBLIC_NAME }}" >> .env.local
+                  echo "NEXT_PUBLIC_TWITTER=${{ vars.NEXT_PUBLIC_TWITTER }}" >> .env.local
+                  echo "NEXT_PUBLIC_GITHUB=${{ vars.NEXT_PUBLIC_GITHUB }}" >> .env.local
+                  echo "BLOG_PATH=blog" >> .env.local
+                  git clone "${{ vars.BLOG_CLONE_URL }}" blog
                   npm ci
                   npm run build
                   npm run export
                   mkdir -m 700 ~/.ssh
-                  echo "$SSH_KEY" > ~/.ssh/id_rsa
-                  echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+                  echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+                  echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
                   chmod 600 ~/.ssh/id_rsa
-                  rsync -a --delete out/ $SSH_USER@$SSH_HOST:garypippi.net/
+                  rsync -a --delete out/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_PATH }}/
