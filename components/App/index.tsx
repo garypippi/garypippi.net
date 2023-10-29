@@ -50,7 +50,7 @@ export const App = ({ className, children }: PropsWithChildren<Props>) => {
                         margin-left: 10px;
                         color: ${color['grey-1']};
                 `}>
-                    {'Github'}
+                    {'GitHub'}
                 </a>
                 <a
                     href={twitter}
