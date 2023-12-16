@@ -14,10 +14,20 @@ import { format } from 'date-fns'
 import { css } from 'goober'
 import { color, md } from '../modules/css'
 import Link from 'next/link'
+import { execSync } from 'child_process'
 
 interface Props {
     attr: Attribute
     root: Root
+}
+
+/**
+ */
+const getCommits = (path: string) => {
+    return execSync(`cd ${BLOG_PATH} && git log --pretty=%H -- ${path.replace(`${BLOG_PATH}/`, '')}`)
+        .toString()
+        .split('\n')
+        .filter(path => !!path)
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -27,9 +37,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
     }))
 }
 
+// 586acb29e5fd1193a55004cad92df9786e78cb51
 export const getStaticProps: GetStaticProps<Props, { id: string }> = async ({ params }) => {
+    console.log(params)
     return getPaths(BLOG_PATH).then(async paths => {
-        return getEntry(paths.find(path => path.includes(params?.id || '')) || '').then(async entry => {
+        const path = paths.find(path => path.includes(params?.id || '')) || ''
+        //console.log(path.replace(`${BLOG_PATH}/`, ''))
+        console.log(getCommits(path))
+        //console.log(execSync(`cd ${BLOG_PATH} && git log --pretty=%H -- ${path.replace(`${BLOG_PATH}/`, '')}`).toString())
+        //console.log(path, execSync(`git log --pretty=%H -- ${path}`).toString())
+        return getEntry(path).then(async entry => {
             return getMdast(entry.body).then(root => {
                 return {
                     props: {
