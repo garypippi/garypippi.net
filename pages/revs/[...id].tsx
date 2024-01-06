@@ -1,25 +1,24 @@
 import { GetStaticProps, GetStaticPaths, NextPage } from 'next'
 import Head from 'next/head'
-import { App } from '../components/App'
+import { App } from '../../components/App'
 import 'highlight.js/styles/atom-one-dark.css'
-import { AppMarkdown } from '../components/AppMarkdown'
+import { AppMarkdown } from '../../components/AppMarkdown'
 import { basename } from 'path'
 import { Root } from 'mdast'
-import { BLOG_PATH } from '../modules/env'
-import { getPaths } from '../modules/markdown/getPaths'
-import { getMdast } from '../modules/markdown/getMdast'
-import { getEntry } from '../modules/markdown/getEntry'
-import { Attribute } from '../modules/markdown/types'
+import { BLOG_PATH } from '../../modules/env'
+import { getPaths } from '../../modules/markdown/getPaths'
+import { getMdast } from '../../modules/markdown/getMdast'
+import { getEntry } from '../../modules/markdown/getEntry'
+import { Attribute } from '../../modules/markdown/types'
 import { format } from 'date-fns'
 import { css } from 'goober'
-import { color, md } from '../modules/css'
+import { color, md } from '../../modules/css'
 import Link from 'next/link'
 import { execSync } from 'child_process'
 
 interface Props {
     attr: Attribute
     root: Root
-    revs: string[]
 }
 
 /**
@@ -32,30 +31,40 @@ const getCommits = (path: string) => {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    return getPaths(BLOG_PATH).then(paths => ({
-        paths: paths.map(path => `/${basename(path).replace('.md', '')}`),
-        fallback: false
-    }))
+    return getPaths(BLOG_PATH).then(paths => {
+        const ps = paths.map(path => {
+            return getCommits(path).map(hash => {
+                console.log(hash)
+                return `/revs/${basename(path).replace('.md', '')}/${hash}`
+            })
+        })
+            .flatMap(paths => paths)
+        return {
+            fallback: false,
+            paths: ps
+        }
+    })
+    //return getPaths(BLOG_PATH).then(paths => ({
+    //    paths: paths.map(path => `/${basename(path).replace('.md', '')}`),
+    //    fallback: false
+    //}))
 }
 
 // 586acb29e5fd1193a55004cad92df9786e78cb51
-export const getStaticProps: GetStaticProps<Props, { id: string }> = async ({ params }) => {
-    //console.log(params)
+export const getStaticProps: GetStaticProps<Props, { id: string[] }> = async ({ params }) => {
+    const [id, rv] = params?.id ?? []
     return getPaths(BLOG_PATH).then(async paths => {
-        const path = paths.find(path => path.includes(params?.id || '')) || ''
+        const path = paths.find(path => path.includes(id || '')) || ''
         //console.log(path.replace(`${BLOG_PATH}/`, ''))
         //console.log(getCommits(path))
         //console.log(execSync(`cd ${BLOG_PATH} && git log --pretty=%H -- ${path.replace(`${BLOG_PATH}/`, '')}`).toString())
         //console.log(path, execSync(`git log --pretty=%H -- ${path}`).toString())
-        return getEntry(path).then(async entry => {
+        return getEntry(path, rv).then(async entry => {
             return getMdast(entry.body).then(root => {
                 return {
                     props: {
                         attr: entry.attr,
-                        root,
-                        revs: getCommits(path).slice(1).map(hash => {
-                            return `/revs/${basename(path).replace('.md', '')}/${hash}`
-                        })
+                        root
                     }
                 }
             })
@@ -63,7 +72,7 @@ export const getStaticProps: GetStaticProps<Props, { id: string }> = async ({ pa
     })
 }
 
-const idPage: NextPage<Props> = ({ attr, root, revs }) => {
+const idPage: NextPage<Props> = ({ attr, root }) => {
     return (
         <App className={css`
             max-width: ${md}px;
@@ -102,20 +111,6 @@ const idPage: NextPage<Props> = ({ attr, root, revs }) => {
                             color: ${color['grey-1']};
                     `}>
                         {`#${tag}`}
-                    </Link>
-                ))}
-            </div>
-            <div>
-                {revs.map((href, i) => (
-                    <Link
-                        key={i}
-                        href={href}
-                        className={css`
-                            font-size: 16px;
-                            margin-left: 4px;
-                            color: ${color['grey-1']};
-                    `}>
-                        {`${basename(href)}`}
                     </Link>
                 ))}
             </div>
