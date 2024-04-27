@@ -10,14 +10,14 @@ interface Props {
 export const AppMarkdownParagraph = ({ node }: Props) => {
     return (
         <p className={css`
-            font-size: 16px;
+            font-size: 15px;
             margin: 16px 0;
             color: ${color['grey-5']};
         `}>
             {node.children.map((node, i) => (
                 <AppMarkdown
                     key={i}
-                    node={node}/>
+                    node={node} />
             ))}
         </p>
     )
