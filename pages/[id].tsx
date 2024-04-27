@@ -55,7 +55,7 @@ const idPage: NextPage<Props> = ({ attr, root }) => {
                 <title>{attr.title}</title>
             </Head>
             <div className={css`
-                margin-bottom: 40px;
+                margin-bottom: 32px;
             `}>
                 <h1 className={css`
                     font-size: 28px;
