@@ -1,5 +1,6 @@
 /node_modules
 /public
-/cli/index.js
+/cli/**/*.mjs
+/out
 /.next
 /.env.local
