@@ -13,6 +13,8 @@ export const AppMarkdownParagraph = ({ node }: Props) => {
             font-size: 15px;
             margin: 16px 0;
             color: ${color['grey-5']};
+            word-break: keep-all;
+            overflow-wrap: break-word;
         `}>
             {node.children.map((node, i) => (
                 <AppMarkdown
