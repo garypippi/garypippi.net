@@ -21,6 +21,7 @@ export const AppMe = ({ className }: Props) => {
             `}>
                 {NAME}
             </h2>
+            {/*
             <div className={css`
                 padding-left: 1px;
                 color: ${color['grey-6']};
@@ -50,6 +51,7 @@ export const AppMe = ({ className }: Props) => {
                     リファクタリング、ユニットテストの整備をすることが趣味です。<br />
                 </p>
             </div>
+            */}
         </div>
     )
 }
