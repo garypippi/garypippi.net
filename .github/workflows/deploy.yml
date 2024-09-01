@@ -44,4 +44,4 @@ jobs:
                   echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
                   echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
                   chmod 600 ~/.ssh/id_rsa
-                  rsync -a --delete out/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_PATH }}/
+                  rsync -a --delete -e "ssh -p ${{ secrets.SSH_PORT }}" out/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_PATH }}/
