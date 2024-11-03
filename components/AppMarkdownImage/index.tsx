@@ -14,6 +14,7 @@ export const AppMarkdownImage = ({ node: { url, alt } }: Props) => {
             className={css`
                 max-width: 100%;
                 margin: 10px 0;
-        `} />
+            `}
+        />
     )
 }

@@ -2,7 +2,13 @@ import { join } from 'path'
 import { existsSync, readdirSync, createWriteStream } from 'fs'
 
 const outDir = join(process.cwd(), 'out')
-const ignore = [/^_next$/, /^404\.html/, /^tags$/, /^sitemap\.xml$/, /^index\.html$/]
+const ignore = [
+    /^_next$/,
+    /^404\.html/,
+    /^tags$/,
+    /^sitemap\.xml$/,
+    /^index\.html$/,
+]
 const output = join(outDir, 'sitemap.xml')
 
 const hostURL = process.env.HOST_URL
@@ -20,7 +26,9 @@ export const sitemap = () => {
     })
 
     handle.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-    handle.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+    handle.write(
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n',
+    )
 
     handle.write('<url>\n')
     handle.write(`  <loc>${hostURL}/</loc>\n`)
@@ -30,7 +38,9 @@ export const sitemap = () => {
         .filter(file => !ignore.some(re => re.test(file)))
         .forEach(file => {
             handle.write('<url>\n')
-            handle.write(`  <loc>${hostURL}/${file.replace(/^([^.]+)\.html$/, '$1')}</loc>\n`)
+            handle.write(
+                `  <loc>${hostURL}/${file.replace(/^([^.]+)\.html$/, '$1')}</loc>\n`,
+            )
             handle.write('</url>\n')
         })
 

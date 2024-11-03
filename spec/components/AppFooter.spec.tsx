@@ -5,7 +5,7 @@ import * as Store from '../../modules/store'
 
 const snsLinks = [
     { href: 'hoge', icon: 'fuga' },
-    { href: 'fuga', icon: 'hoge' }
+    { href: 'fuga', icon: 'hoge' },
 ]
 
 describe('AppFooter.tsx', () => {

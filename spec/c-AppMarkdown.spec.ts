@@ -12,10 +12,9 @@ const path = join(process.cwd(), 'blog')
 describe('components/AppMarkdown', () => {
     // make sure no error be thrown
     it('should render all posts', async () => {
-        return getPosts(path)
-            .then(path => {
-                // TODO:
-                console.log(path)
-            })
+        return getPosts(path).then(path => {
+            // TODO:
+            console.log(path)
+        })
     })
 })

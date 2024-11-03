@@ -13,7 +13,7 @@ export const getPaths = async (dir: string): Promise<string[]> => {
             // prepare promise
             const resolvesToTree = paths
                 //.filter(path => !/^\..+$/.test(`${path}`)) // exclude '..' entry
-                .map(path => getPaths(`${dir}/${path}`))   // recurse
+                .map(path => getPaths(`${dir}/${path}`)) // recurse
             // yields string[][] so we flatten it
             const resolvesToPaths = Promise.all(resolvesToTree)
                 // flatten
@@ -21,7 +21,7 @@ export const getPaths = async (dir: string): Promise<string[]> => {
                     return tree
                         .reduce((a, paths) => a.concat(paths), []) // flatten
                         .filter(path => /\/\d{14}\/.+\.md$/.test(path))
-                        .reverse()                                 // order
+                        .reverse() // order
                 })
             res(resolvesToPaths)
         })

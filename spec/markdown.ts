@@ -9,7 +9,12 @@ import { join } from 'path'
 
 // const print: Plugin = () =>
 //     tree => console.log(inspect(tree))
-const bf = readFileSync(join(process.cwd(), 'blog/20180418075900/623edf37761ce072a5f41a09deb2f8cb.md'))
+const bf = readFileSync(
+    join(
+        process.cwd(),
+        'blog/20180418075900/623edf37761ce072a5f41a09deb2f8cb.md',
+    ),
+)
 
 const isRoot = (node: Node): node is Root => {
     return node.type === 'root'
@@ -28,32 +33,33 @@ const isLink = (node: Node): node is Link => {
 }
 
 const reducer = (a: number[], n: Node, i: number, o: Node[]): number[] => {
-    return isText(n)
-        && n.value.slice(0, -1) === '?'
-        && o[i + 1]
-        && isLink(o[i + 1])
-        ? a.concat(i) : a
+    return isText(n) &&
+        n.value.slice(0, -1) === '?' &&
+        o[i + 1] &&
+        isLink(o[i + 1])
+        ? a.concat(i)
+        : a
 }
 
 const getPositions = (node: Node): number[] => {
-    return isParagraph(node)
-        && node.children.reduce(reducer, [])
-        || []
+    return (isParagraph(node) && node.children.reduce(reducer, [])) || []
 }
 
 const isVideo = (node: Node): boolean => {
-    return isParagraph(node)
-        && node.children.some((n, i) => {
-            return isText(n)
-                && n.value.slice(0, -1) === '?'
-                && node.children[i + 1]
-                && isLink(node.children[i + 1])
+    return (
+        isParagraph(node) &&
+        node.children.some((n, i) => {
+            return (
+                isText(n) &&
+                n.value.slice(0, -1) === '?' &&
+                node.children[i + 1] &&
+                isLink(node.children[i + 1])
+            )
         })
+    )
 }
 
-const visitor: Visitor = (node, parent, index) => {
-
-}
+const visitor: Visitor = (node, parent, index) => {}
 
 const video: Plugin = () => {
     return root => {
@@ -63,9 +69,17 @@ const video: Plugin = () => {
                 if (isParagraph(node)) {
                     console.log('entering paragraph')
                     node.children.forEach((child, i) => {
-                        if (isText(child) && child.value.slice(-1) === '?' && node.children[i + 1] && isLink(node.children[i + 1])) {
+                        if (
+                            isText(child) &&
+                            child.value.slice(-1) === '?' &&
+                            node.children[i + 1] &&
+                            isLink(node.children[i + 1])
+                        ) {
                             console.log('entering modification')
-                            child.value = child.value.slice(0, child.value.length - 1)
+                            child.value = child.value.slice(
+                                0,
+                                child.value.length - 1,
+                            )
                             node.children[i + 1].type = 'video' as any
                         }
                     })
@@ -81,18 +95,14 @@ describe('', () => {
             inspect(
                 await unified()
                     .use(video)
-                    .run(
-                        unified()
-                            .use(remarkParse)
-                            .parse(bf)
-                    )
+                    .run(unified().use(remarkParse).parse(bf)),
                 // unified()
                 //     .use(remarkParse)
                 //     .use(video)
                 //     .run
                 //     .parse('This is paragraph containing video. ?[](hello.mp4)')
-                    // .parse(bf.toString())
-            )
+                // .parse(bf.toString())
+            ),
         )
     })
 })

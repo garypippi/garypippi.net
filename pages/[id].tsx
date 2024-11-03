@@ -23,19 +23,23 @@ interface Props {
 export const getStaticPaths: GetStaticPaths = async () => {
     return getPaths(BLOG_PATH).then(paths => ({
         paths: paths.map(path => `/${basename(path).replace('.md', '')}`),
-        fallback: false
+        fallback: false,
     }))
 }
 
-export const getStaticProps: GetStaticProps<Props, { id: string }> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<Props, { id: string }> = async ({
+    params,
+}) => {
     return getPaths(BLOG_PATH).then(async paths => {
-        return getEntry(paths.find(path => path.includes(params?.id || '')) || '').then(async entry => {
+        return getEntry(
+            paths.find(path => path.includes(params?.id || '')) || '',
+        ).then(async entry => {
             return getMdast(entry.body).then(root => {
                 return {
                     props: {
                         attr: entry.attr,
-                        root
-                    }
+                        root,
+                    },
                 }
             })
         })
@@ -44,31 +48,39 @@ export const getStaticProps: GetStaticProps<Props, { id: string }> = async ({ pa
 
 const idPage: NextPage<Props> = ({ attr, root }) => {
     return (
-        <App className={css`
-            max-width: ${md}px;
-            margin: 0 auto;
-            @media screen and (max-width: ${md}px){
-                max-width: 100%;
-            }
-        `}>
+        <App
+            className={css`
+                max-width: ${md}px;
+                margin: 0 auto;
+                @media screen and (max-width: ${md}px) {
+                    max-width: 100%;
+                }
+            `}
+        >
             <Head>
                 <title>{attr.title}</title>
             </Head>
-            <div className={css`
-                margin-bottom: 32px;
-            `}>
-                <h1 className={css`
-                    font-size: 28px;
-                    font-weight: normal;
-                    margin-bottom: 8px;
-                    color: ${color['grey-6']};
-                `}>
+            <div
+                className={css`
+                    margin-bottom: 32px;
+                `}
+            >
+                <h1
+                    className={css`
+                        font-size: 28px;
+                        font-weight: normal;
+                        margin-bottom: 8px;
+                        color: ${color['grey-6']};
+                    `}
+                >
                     {attr.title}
                 </h1>
-                <span className={css`
-                    font-size: 16px;
-                    color: ${color['grey-5']};
-                `}>
+                <span
+                    className={css`
+                        font-size: 16px;
+                        color: ${color['grey-5']};
+                    `}
+                >
                     {format(new Date(attr.date), 'yyyy/MM/dd HH:mm')}
                 </span>
                 {attr.tags.map((tag, i) => (
@@ -79,7 +91,8 @@ const idPage: NextPage<Props> = ({ attr, root }) => {
                             font-size: 16px;
                             margin-left: 4px;
                             color: ${color['grey-1']};
-                    `}>
+                        `}
+                    >
                         {`#${tag}`}
                     </Link>
                 ))}

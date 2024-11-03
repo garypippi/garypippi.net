@@ -13,11 +13,10 @@ export const AppMarkdownLink = ({ node }: Props) => {
             href={node.url}
             className={css`
                 color: ${color['grey-1']};
-        `}>
+            `}
+        >
             {node.children.map((node, i) => (
-                <AppMarkdown
-                    key={i}
-                    node={node}/>
+                <AppMarkdown key={i} node={node} />
             ))}
         </a>
     )

@@ -4,15 +4,17 @@ import { Entry } from '../../modules/markdown/types'
 import { AppBlogEntriesEntry } from '../AppBlogEntriesEntry'
 
 interface Props {
-    entries: Omit<Entry,'body'>[]
+    entries: Omit<Entry, 'body'>[]
 }
 
 export const AppBlogEntries = ({ entries }: Props) => {
     return (
-        <div className={css`
-            max-width: ${lg}px;
-            margin: 0 auto;
-        `}>
+        <div
+            className={css`
+                max-width: ${lg}px;
+                margin: 0 auto;
+            `}
+        >
             {entries.map((entry, i) => (
                 <AppBlogEntriesEntry
                     key={i}
@@ -25,7 +27,8 @@ export const AppBlogEntries = ({ entries }: Props) => {
                                 margin-right: 10px;
                             }
                         }
-                `}/>
+                    `}
+                />
             ))}
         </div>
     )

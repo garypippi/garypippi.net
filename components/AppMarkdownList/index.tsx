@@ -8,13 +8,13 @@ interface Props {
 
 export const AppMarkdownList = ({ node }: Props) => {
     return (
-        <ul className={css`
-            padding-left: 20px;
-        `}>
+        <ul
+            className={css`
+                padding-left: 20px;
+            `}
+        >
             {node.children.map((node, i) => (
-                <AppMarkdown
-                    key={i}
-                    node={node}/>
+                <AppMarkdown key={i} node={node} />
             ))}
         </ul>
     )

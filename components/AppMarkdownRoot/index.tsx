@@ -9,9 +9,7 @@ export const AppMarkdownRoot = ({ node }: Props) => {
     return (
         <div>
             {node.children.map((node, i) => (
-                <AppMarkdown
-                    key={i}
-                    node={node}/>
+                <AppMarkdown key={i} node={node} />
             ))}
         </div>
     )

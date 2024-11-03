@@ -8,17 +8,24 @@ interface Props {
 
 export const AppMe = ({ className }: Props) => {
     return (
-        <div className={mergeClass(className, css`
-            max-width: ${md}px;
-            margin-right: auto;
-            margin-left: auto;
-        `)}>
-            <h2 className={css`
-                font-weight: normal;
-                font-size: 22px;
-                margin-bottom: 10px;
-                color: ${color['grey-5']};
-            `}>
+        <div
+            className={mergeClass(
+                className,
+                css`
+                    max-width: ${md}px;
+                    margin-right: auto;
+                    margin-left: auto;
+                `,
+            )}
+        >
+            <h2
+                className={css`
+                    font-weight: normal;
+                    font-size: 22px;
+                    margin-bottom: 10px;
+                    color: ${color['grey-5']};
+                `}
+            >
                 {NAME}
             </h2>
             {/*

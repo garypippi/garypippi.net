@@ -20,7 +20,9 @@ export const getEntry = async (path: string): Promise<Entry> => {
             const regExpResultArray = re.exec(buf)
             // split failure
             if (null === regExpResultArray) {
-                throw new Error(`Failed to split front matter and content. path: ${path}`)
+                throw new Error(
+                    `Failed to split front matter and content. path: ${path}`,
+                )
             }
             // parse toml
             const attr = toml.parse(regExpResultArray[1])
@@ -32,7 +34,7 @@ export const getEntry = async (path: string): Promise<Entry> => {
             res({
                 href,
                 attr,
-                body: regExpResultArray[2]
+                body: regExpResultArray[2],
             })
         })
     })

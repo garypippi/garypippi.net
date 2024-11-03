@@ -13,8 +13,9 @@ const Document: NextPage<Props> = ({ css }: Props) => {
                 <style
                     id="_goobar"
                     dangerouslySetInnerHTML={{
-                        __html: css
-                    }}/>
+                        __html: css,
+                    }}
+                />
             </Head>
             <body>
                 <Main />
@@ -26,8 +27,8 @@ const Document: NextPage<Props> = ({ css }: Props) => {
 
 Document.getInitialProps = async (context: DocumentContext) => {
     return {
-        ... await context.renderPage(),
-        css: extractCss()
+        ...(await context.renderPage()),
+        css: extractCss(),
     }
 }
 

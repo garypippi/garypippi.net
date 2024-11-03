@@ -2,7 +2,7 @@ import { Node } from 'unist'
 import { Resource, Alternative } from 'mdast'
 
 export interface Video extends Node, Resource, Alternative {
-    type: 'video';
+    type: 'video'
 }
 
 export interface Attribute {

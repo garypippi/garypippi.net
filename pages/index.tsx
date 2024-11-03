@@ -26,9 +26,9 @@ const indexPage: NextPage<Props> = ({ entries }) => {
                     @media screen and (max-width: ${lg}px) {
                         margin-bottom: 20px;
                     }
-            `} />
-            <AppBlogEntries
-                entries={entries} />
+                `}
+            />
+            <AppBlogEntries entries={entries} />
         </App>
     )
 }
@@ -39,6 +39,5 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         .then(entries => entries.map(({ attr, href }) => ({ attr, href })))
         .then(entries => ({ props: { entries } }))
 }
-
 
 export default indexPage

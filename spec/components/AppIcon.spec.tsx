@@ -5,7 +5,12 @@ import { AppIcon } from '../../components/AppIcon'
 describe('AppIcon.tsx', () => {
     it('should render', () => {
         const container = mkcontainer()
-        render(<AppIcon size={123} className="hoge">fuga</AppIcon>, container)
+        render(
+            <AppIcon size={123} className="hoge">
+                fuga
+            </AppIcon>,
+            container,
+        )
         expect(container.innerHTML).toMatchSnapshot()
     })
 })

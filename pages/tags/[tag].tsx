@@ -22,17 +22,21 @@ const indexPage: NextPage<Props> = ({ entries }) => {
             <AppMe
                 className={css`
                     margin-bottom: 80px;
-            `} />
-            <AppBlogEntries
-                entries={entries} />
+                `}
+            />
+            <AppBlogEntries entries={entries} />
         </App>
     )
 }
 
-export const getStaticProps: GetStaticProps<Props, { tag: string }> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<Props, { tag: string }> = async ({
+    params,
+}) => {
     return getPaths(BLOG_PATH)
         .then(paths => Promise.all(paths.map(path => getEntry(path))))
-        .then(entries => entries.filter(({ attr }) => attr.tags.includes(params?.tag || '')))
+        .then(entries =>
+            entries.filter(({ attr }) => attr.tags.includes(params?.tag || '')),
+        )
         .then(entries => entries.map(({ attr, href }) => ({ attr, href })))
         .then(entries => ({ props: { entries } }))
 }
@@ -40,12 +44,13 @@ export const getStaticProps: GetStaticProps<Props, { tag: string }> = async ({ p
 export const getStaticPaths: GetStaticPaths<{ tag: string }> = async () => {
     return getPaths(BLOG_PATH)
         .then(paths => Promise.all(paths.map(path => getEntry(path))))
-        .then(entries => entries.reduce<string[]>((a, v) => a.concat(v.attr.tags), []))
+        .then(entries =>
+            entries.reduce<string[]>((a, v) => a.concat(v.attr.tags), []),
+        )
         .then(tags => ({
             paths: tags.map(tag => `/tags/${tag}`),
-            fallback: false
+            fallback: false,
         }))
 }
-
 
 export default indexPage

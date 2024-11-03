@@ -11,12 +11,13 @@ const jestConfig: JestConfigWithTsJest = {
         // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
         // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
         '^.+\\.tsx?$': [
-            'ts-jest', {
-                tsconfig: '<rootDir>/spec/tsconfig.json'
+            'ts-jest',
+            {
+                tsconfig: '<rootDir>/spec/tsconfig.json',
                 //useESM: true
-            }
-        ]
-    }
+            },
+        ],
+    },
 }
 
 export default jestConfig

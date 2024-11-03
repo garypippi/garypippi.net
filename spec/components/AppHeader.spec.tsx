@@ -1,4 +1,4 @@
-jest.mock('next/head', () => ((props: any) => <div>{props.children}</div>))
+jest.mock('next/head', () => (props: any) => <div>{props.children}</div>)
 
 import { render } from 'react-dom'
 import { mkcontainer } from '../mkcontainer'
