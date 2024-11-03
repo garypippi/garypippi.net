@@ -1,5 +1,8 @@
 {
-  "extends": "next",
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "next/core-web-vitals"
+  ],
   "rules": {
     "indent": ["error", 4],
     "react/jsx-closing-bracket-location": ["error", "after-props"],
