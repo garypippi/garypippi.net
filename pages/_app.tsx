@@ -11,11 +11,11 @@ const GlobalStyles = createGlobalStyles`
     html,body { background: #FAFAFA; }
 `
 
-const App = ({ Component, pageProps }: AppProps<any>) => {
+const App = ({ Component, pageProps }: AppProps) => {
     return (
         <>
             <GlobalStyles />
-            <Component {...pageProps}/>
+            <Component {...pageProps} />
         </>
     )
 }
