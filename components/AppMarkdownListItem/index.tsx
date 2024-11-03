@@ -8,25 +8,16 @@ interface Props {
 }
 
 export const AppMarkdownListItem = ({ node }: Props) => {
-
-    const [child] = node.children
-
-    if (child.type === 'paragraph') {
-        return (
-            <li className={css`
-                font-size: 16px;
-                color: ${color['grey-5']};
-            `}>
-                {child.children.map((node, i) => (
-                    <AppMarkdown
-                        key={i}
-                        node={node}/>
-                ))}
-            </li>
-        )
-    }
-
     return (
-        <></>
+        <li className={css`
+            font-size: 16px;
+            color: ${color['grey-5']};
+        `}>
+            {node.children.map((child, i) => {
+                return child.type === 'paragraph'
+                    ? <>{child.children.map((child, j) => <AppMarkdown key={`${i}${j}`} node={child} />)}</>
+                    : <AppMarkdown key={i} node={child} />
+            })}
+        </li>
     )
 }
