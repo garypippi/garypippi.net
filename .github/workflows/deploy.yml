@@ -37,7 +37,6 @@ jobs:
           git clone "${{ vars.BLOG_CLONE_URL }}" blog
           npm ci
           npm run build
-          npm run export
           npm run build:cli
           HOST_URL="${{ vars.HOST_URL }}" node ./cli/index.mjs sitemap
           mkdir -m 700 ~/.ssh
