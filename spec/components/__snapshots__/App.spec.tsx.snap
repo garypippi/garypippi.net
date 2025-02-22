@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`App.tsx is a root container for garypippi.net 1`] = `"<div class="container mx-auto">hoge</div>"`;

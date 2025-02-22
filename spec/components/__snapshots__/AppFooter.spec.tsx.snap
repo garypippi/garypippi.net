@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`AppFooter.tsx should render 1`] = `"<div class="2xl:px-64 xl:px-48 lg:px-16 md:px-8 px-4 my-8 py-8 text-gray-400"><div class="flex flex-row justify-center items-center my-4"><a href="hoge" class="mr-2 last:mr-0"><svg width="24" height="24" viewBox="0 0 24 24" class="inline "><path d="fuga" class="fill-current"></path></svg></a><a href="fuga" class="mr-2 last:mr-0"><svg width="24" height="24" viewBox="0 0 24 24" class="inline "><path d="hoge" class="fill-current"></path></svg></a></div><div class="flex justify-center items-center border-b my-4 pb-4"><a href="/about">About</a></div><div class="flex justify-center items-center my-4 text-xs"><a href="/pp">プライバシーポリシー</a></div></div>"`;

@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`AppHeader.tsx should render 1`] = `"<div class="py-8 lg:py-8 mx-4 lg:mx-16 my-4 lg:my-8 flex flex-row justify-center items-stretch text-gray-900 border-b"><div><title>hoge</title></div><h1 class="text-gray-500"><a href="/">fuga</a></h1></div>"`;
