@@ -5,7 +5,6 @@
     "prettier"
   ],
   "rules": {
-    "indent": ["error", 4],
     "@next/next/no-img-element": "off"
   }
 }
