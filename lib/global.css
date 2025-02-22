@@ -1,0 +1,4 @@
+:not(pre, code, code span) {
+    color: #212529;
+    border-color: #212529;
+}
