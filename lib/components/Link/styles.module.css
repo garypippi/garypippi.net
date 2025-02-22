@@ -1,0 +1,26 @@
+.container {
+    margin-bottom: 24px;
+
+    .date {
+        margin-right: 6px;
+        font-size: 14px;
+    }
+
+    a.tag {
+        margin: 0 6px;
+        font-size: 14px;
+    }
+
+    .title {
+        margin: 0 0 10px;
+        font-weight: normal;
+
+        & a {
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
