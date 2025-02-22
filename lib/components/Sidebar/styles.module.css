@@ -1,0 +1,20 @@
+.container {
+    margin-bottom: 40px;
+
+    .title {
+        margin: 0 0 10px;
+        padding: 0;
+        font-weight: normal;
+    }
+
+    .items {
+        display: flex;
+        flex-wrap: wrap;
+
+        & a {
+            margin: 4px 6px 4px 0;
+            font-size: 14px;
+            text-decoration: underline;
+        }
+    }
+}
