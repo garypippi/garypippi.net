@@ -1,7 +1,0 @@
-export const SITE_TITLE = process.env.NEXT_PUBLIC_SITE_TITLE ?? ''
-export const BLOG_PATH = process.env.BLOG_PATH ?? ''
-export const IMAGE_PATH = process.env.NEXT_PUBLIC_IMAGE_PATH ?? ''
-export const VIDEO_PATH = process.env.NEXT_PUBLIC_VIDEO_PATH ?? ''
-export const NAME = process.env.NEXT_PUBLIC_NAME ?? ''
-export const TWITTER = process.env.NEXT_PUBLIC_TWITTER ?? ''
-export const GITHUB = process.env.NEXT_PUBLIC_GITHUB ?? ''
