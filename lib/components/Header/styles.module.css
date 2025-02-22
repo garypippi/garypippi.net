@@ -1,0 +1,20 @@
+.container {
+    margin-bottom: 40px;
+
+    .title {
+        margin: 0 0 20px;
+        font-size: 28px;
+        font-weight: normal;
+    }
+
+    .attr-date {
+        font-size: 16px;
+        margin-right: 4px;
+    }
+
+    .attr-tag {
+        font-size: 16px;
+        margin-left: 4px;
+        text-decoration: underline;
+    }
+}
