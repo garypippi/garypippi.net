@@ -13,7 +13,10 @@ export const Code = ({ node }: Props) => {
 
     return (
         <pre className={['hljs', styles.pre].join(' ')}>
-            <code dangerouslySetInnerHTML={{ __html }} />
+            <code
+                className={styles.code}
+                dangerouslySetInnerHTML={{ __html }}
+            />
         </pre>
     )
 }

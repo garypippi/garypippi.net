@@ -4,3 +4,6 @@
     max-width: 100%;
     overflow-x: scroll;
 }
+.code {
+    font-family: "Liberation Mono", monospace;
+}
