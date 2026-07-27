@@ -20,11 +20,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     environment: garypippi.net
+    permissions:
+      id-token: write
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           cache: 'npm'
+      - name: Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          audience: ${{ secrets.TS_AUDIENCE }}
+          tags: tag:ci
       - name: Deploy
         run: |
           echo "NEXT_PUBLIC_SITE_TITLE=${{ vars.NEXT_PUBLIC_SITE_TITLE }}" >> .env.local
@@ -33,6 +41,7 @@ jobs:
           echo "NEXT_PUBLIC_NAME=${{ vars.NEXT_PUBLIC_NAME }}" >> .env.local
           echo "NEXT_PUBLIC_TWITTER=${{ vars.NEXT_PUBLIC_TWITTER }}" >> .env.local
           echo "NEXT_PUBLIC_GITHUB=${{ vars.NEXT_PUBLIC_GITHUB }}" >> .env.local
+          echo "NEXT_PUBLIC_UMAMI_WEBSITE_ID=${{ vars.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}" >> .env.local
           echo "BLOG_PATH=blog" >> .env.local
           git clone "${{ vars.BLOG_CLONE_URL }}" blog
           npm ci

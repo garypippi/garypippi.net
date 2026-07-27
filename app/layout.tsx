@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
-import { SITE_TITLE, GITHUB, TWITTER } from '@lib/environments'
+import Script from 'next/script'
+import { SITE_TITLE, GITHUB, TWITTER, UMAMI_WEBSITE_ID } from '@lib/environments'
 import { getPostTags } from '@lib/getPostTags'
 import { getPostMonths } from '@lib/getPostMonths'
 import { Sidebar } from '@lib/components/Sidebar'
@@ -59,6 +60,11 @@ export default async function RootLayout({ children }: Props) {
                     </div>
                 </div>
             </body>
+            <Script
+                src="/umami/script.js"
+                data-website-id={UMAMI_WEBSITE_ID}
+                strategy="afterInteractive"
+            />
         </html>
     )
 }
