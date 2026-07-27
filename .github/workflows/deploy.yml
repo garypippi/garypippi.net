@@ -4,52 +4,105 @@ on:
   workflow_dispatch:
   push:
     branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
+    environment: garypippi.net
+    env:
+      NEXT_PUBLIC_SITE_TITLE: ${{ vars.NEXT_PUBLIC_SITE_TITLE }}
+      NEXT_PUBLIC_VIDEO_PATH: ${{ vars.NEXT_PUBLIC_VIDEO_PATH }}
+      NEXT_PUBLIC_IMAGE_PATH: ${{ vars.NEXT_PUBLIC_IMAGE_PATH }}
+      NEXT_PUBLIC_NAME: ${{ vars.NEXT_PUBLIC_NAME }}
+      NEXT_PUBLIC_TWITTER: ${{ vars.NEXT_PUBLIC_TWITTER }}
+      NEXT_PUBLIC_GITHUB: ${{ vars.NEXT_PUBLIC_GITHUB }}
+      NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${{ vars.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
+      BLOG_PATH: blog
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           cache: 'npm'
+      - name: Clone blog
+        env:
+          BLOG_CLONE_URL: ${{ vars.BLOG_CLONE_URL }}
+        run: git clone --depth 1 "$BLOG_CLONE_URL" blog
+      - name: Install
+        run: npm ci
+      - name: Lint
+        run: npm run lint
       - name: Test
+        run: npm run test
+      - name: Build
         run: |
-          npm ci
-          npm run test
+          npm run build
+          npm run build:cli
+      - name: Sitemap
+        env:
+          HOST_URL: ${{ vars.HOST_URL }}
+        run: node ./cli/index.mjs sitemap
+      - name: Verify output
+        run: |
+          set -eu
+          test -f out/index.html
+          test -f out/sitemap.xml
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: out
+          path: out/
+          retention-days: 1
+          if-no-files-found: error
+
   deploy:
     runs-on: ubuntu-latest
-    needs: test
+    needs: build
     environment: garypippi.net
     permissions:
+      contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          cache: 'npm'
+          name: out
+          path: out
+      - name: Verify artifact
+        run: |
+          set -eu
+          test -f out/index.html
+          test -f out/sitemap.xml
       - name: Tailscale
-        uses: tailscale/github-action@v4
+        uses: tailscale/github-action@780049a30b6ff5c378a9e7b389d15ece7a204888 # v4.1.3
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           audience: ${{ secrets.TS_AUDIENCE }}
           tags: tag:ci
       - name: Deploy
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PATH: ${{ secrets.SSH_PATH }}
         run: |
-          echo "NEXT_PUBLIC_SITE_TITLE=${{ vars.NEXT_PUBLIC_SITE_TITLE }}" >> .env.local
-          echo "NEXT_PUBLIC_VIDEO_PATH=${{ vars.NEXT_PUBLIC_VIDEO_PATH }}" >> .env.local
-          echo "NEXT_PUBLIC_IMAGE_PATH=${{ vars.NEXT_PUBLIC_IMAGE_PATH }}" >> .env.local
-          echo "NEXT_PUBLIC_NAME=${{ vars.NEXT_PUBLIC_NAME }}" >> .env.local
-          echo "NEXT_PUBLIC_TWITTER=${{ vars.NEXT_PUBLIC_TWITTER }}" >> .env.local
-          echo "NEXT_PUBLIC_GITHUB=${{ vars.NEXT_PUBLIC_GITHUB }}" >> .env.local
-          echo "NEXT_PUBLIC_UMAMI_WEBSITE_ID=${{ vars.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}" >> .env.local
-          echo "BLOG_PATH=blog" >> .env.local
-          git clone "${{ vars.BLOG_CLONE_URL }}" blog
-          npm ci
-          npm run build
-          npm run build:cli
-          HOST_URL="${{ vars.HOST_URL }}" node ./cli/index.mjs sitemap
-          mkdir -m 700 ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/id_rsa
-          rsync -a --delete -e "ssh -p ${{ secrets.SSH_PORT }}" out/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_PATH }}/
+          set -eu
+          case "$SSH_PATH" in
+            /|'') echo "SSH_PATH must be set and must not be /" >&2; exit 1 ;;
+          esac
+          case "$SSH_PORT" in
+            ''|*[!0-9]*) echo "SSH_PORT must be a number" >&2; exit 1 ;;
+          esac
+          mkdir -p -m 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_rsa ~/.ssh/known_hosts
+          rsync -a --delete -e "ssh -p ${SSH_PORT}" out/ "${SSH_USER}@${SSH_HOST}:${SSH_PATH}/"
