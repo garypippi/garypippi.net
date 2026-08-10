@@ -5,3 +5,4 @@
 /tsconfig.tsbuildinfo
 /.next
 /.env.local
+/lib/global.css.d.ts

@@ -32,7 +32,7 @@ export default async function Page({
 }) {
     const { id } = await params
     const { attr, body } = await getPostById(id)
-    const root = await getMdast(body)
+    const root = getMdast(body)
 
     return (
         <>

@@ -1,0 +1,9 @@
+.wrapper {
+    margin: 20px 0;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    border-collapse: collapse;
+}

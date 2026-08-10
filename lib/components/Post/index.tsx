@@ -1,11 +1,21 @@
-import { Root, Content } from 'mdast'
+import { Root, RootContent } from 'mdast'
 import { Video } from '@lib/getMdast'
 import * as M from './Markdown'
 
 type Props = {
-    node: Root | Content | Video
+    node: Root | RootContent | Video
 }
 
+/**
+ * Dispatch an mdast node to its component.
+ *
+ * Unsupported node types throw at build time rather than being dropped, so an
+ * article using one fails the build instead of silently losing content.
+ * Notably `strong` (**bold**) and `emphasis` (*italic*) are not handled yet.
+ *
+ * `tableRow` and `tableCell` are absent on purpose: `<th>` vs `<td>` and the
+ * column alignment need the row context, so `Table` renders them directly.
+ */
 export const Post = ({ node }: Props) => {
     switch (node.type) {
         case 'root':
@@ -32,6 +42,8 @@ export const Post = ({ node }: Props) => {
             return <M.Video node={node} />
         case 'blockquote':
             return <M.Blockquote node={node} />
+        case 'table':
+            return <M.Table node={node} />
         default:
             throw new Error(`Not something we can render: ${node.type}`)
     }
