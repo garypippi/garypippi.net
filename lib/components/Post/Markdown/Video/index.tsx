@@ -1,9 +1,9 @@
-import { Video as MdastVideo } from '@lib/getMdast'
+import { Image as MdastImage } from 'mdast'
 import { VIDEO_PATH } from '@lib/environments'
 import styles from './styles.module.css'
 
 type Props = {
-    node: MdastVideo
+    node: MdastImage
 }
 
 export const Video = ({ node: { url } }: Props) => {

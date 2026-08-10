@@ -1,10 +1,11 @@
 import { Root, RootContent } from 'mdast'
-import { Video } from '@lib/getMdast'
 import * as M from './Markdown'
 
 type Props = {
-    node: Root | RootContent | Video
+    node: Root | RootContent
 }
+
+const isVideoUrl = (url: string) => /\.(mp4|webm|mov)$/i.test(url)
 
 /**
  * Dispatch an mdast node to its component.
@@ -15,6 +16,9 @@ type Props = {
  *
  * `tableRow` and `tableCell` are absent on purpose: `<th>` vs `<td>` and the
  * column alignment need the row context, so `Table` renders them directly.
+ *
+ * `image` splits on the file extension: `![clip](clip.mp4)` renders a
+ * `<video>`, everything else an `<img>`.
  */
 export const Post = ({ node }: Props) => {
     switch (node.type) {
@@ -29,7 +33,11 @@ export const Post = ({ node }: Props) => {
         case 'listItem':
             return <M.ListItem node={node} />
         case 'image':
-            return <M.Image node={node} />
+            return isVideoUrl(node.url) ? (
+                <M.Video node={node} />
+            ) : (
+                <M.Image node={node} />
+            )
         case 'heading':
             return <M.Heading node={node} />
         case 'code':
@@ -38,8 +46,6 @@ export const Post = ({ node }: Props) => {
             return <M.Link node={node} />
         case 'inlineCode':
             return <M.InlineCode node={node} />
-        case 'video':
-            return <M.Video node={node} />
         case 'blockquote':
             return <M.Blockquote node={node} />
         case 'table':
