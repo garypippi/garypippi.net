@@ -1,9 +1,19 @@
 .container {
-    margin-bottom: 24px;
+    /* 区切りは項目の「上」に置く。後ろに Pager が続くので :last-child は使えない */
+    padding-top: 12px;
+    margin-top: 12px;
+    border-top: 1px solid var(--rule);
+
+    &:first-child {
+        padding-top: 0;
+        margin-top: 0;
+        border-top: none;
+    }
 
     .date {
         margin-right: 6px;
         font-size: 14px;
+        color: var(--fg-weak);
     }
 
     a.tag {
@@ -12,7 +22,7 @@
     }
 
     .title {
-        margin: 0 0 10px;
+        margin: 0 0 2px;
         font-weight: normal;
 
         & a {

@@ -7,8 +7,9 @@ import {
     UMAMI_WEBSITE_ID,
 } from '@lib/environments'
 import { getPostTags } from '@lib/getPostTags'
-import { getPostMonths } from '@lib/getPostMonths'
+import { getPostMonthsByYear } from '@lib/getPostMonthsByYear'
 import { Sidebar } from '@lib/components/Sidebar'
+import { MonthList } from '@lib/components/MonthList'
 import styles from './layout.module.css'
 import '@lib/global.css'
 
@@ -22,18 +23,9 @@ const getSidebarTagItems = async () => {
     )
 }
 
-const getSidebarMonthItems = async () => {
-    return getPostMonths().then(months =>
-        Object.keys(months).map(month => ({
-            text: `${month}(${months[month]})`,
-            href: `/month/${month}`,
-        })),
-    )
-}
-
 export default async function RootLayout({ children }: Props) {
     const tags = await getSidebarTagItems()
-    const months = await getSidebarMonthItems()
+    const months = await getPostMonthsByYear()
 
     return (
         <html lang="ja">
@@ -55,7 +47,7 @@ export default async function RootLayout({ children }: Props) {
                     <div className={styles.content}>
                         <div className={styles.side}>
                             <Sidebar title="タグリスト" items={tags} />
-                            <Sidebar title="月別" items={months} />
+                            <MonthList title="月別" groups={months} />
                         </div>
                         <div className={styles.main}>{children}</div>
                     </div>
@@ -68,6 +60,7 @@ export default async function RootLayout({ children }: Props) {
                             <a href={`https://x.com/${TWITTER}`}>
                                 {'X(Twitter)'}
                             </a>
+                            <a href="/feed.xml">{'RSS'}</a>
                         </div>
                     </div>
                 </div>

@@ -1,4 +1,20 @@
+:root {
+    /* サイト全体を等幅で固定する。未指定だと読者のブラウザ既定に左右される */
+    --font:
+        ui-monospace, 'SFMono-Regular', 'Liberation Mono', 'Menlo', 'Consolas',
+        monospace;
+    --fg: #212529;
+    --fg-weak: #6c757d;
+    --bg: #fbfbfb;
+    --rule: #dee2e6;
+}
+
 :not(pre, code, code span) {
-    color: #212529;
-    border-color: #212529;
+    color: var(--fg);
+    border-color: var(--fg);
+}
+
+body {
+    font-family: var(--font);
+    line-height: 1.65;
 }

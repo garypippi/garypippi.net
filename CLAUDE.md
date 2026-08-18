@@ -94,6 +94,8 @@ RSS の `description` は `getPostExcerpt` によるプレーンテキストの�
 
 コンポーネントごとの CSS Modules (`styles.module.css`)。**`typed-css-modules` が生成した `.module.css.d.ts` をコミットしている**が、スクリプトもウォッチャーも無いので `.module.css` を編集したら `npx tcm lib app` で型を再生成すること。グローバルは `lib/global.css` (`app/layout.tsx` から import)。tcm は CSS Modules でない `global.css` にも空の `.d.ts` を吐くが不要なので gitignore してある。
 
+`lib/global.css` が `:root` に `--font` / `--fg` / `--fg-weak` / `--bg` / `--rule` を定義しており、各コンポーネントはこれを参照する。**`--font` で等幅を明示指定している** — 以前は `font-family` 未指定で読者のブラウザ既定に見た目が左右されていた。
+
 `next/link` と `next/image` はどこでも使わず、素の `<a>` と `<img>` で統一している (画像は別ホスト配信のため)。対応する ESLint ルールは `eslint.config.mjs` で off にしてある。
 
 ## 規約

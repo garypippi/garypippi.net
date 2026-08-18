@@ -1,9 +1,10 @@
 .pre {
-    margin: 20px 0;
+    margin: 12px 0;
     padding: 10px;
     max-width: 100%;
     overflow-x: scroll;
 }
+
 .code {
-    font-family: "Liberation Mono", monospace;
+    font-family: 'Liberation Mono', monospace;
 }
