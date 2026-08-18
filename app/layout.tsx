@@ -60,11 +60,13 @@ export default async function RootLayout({ children }: Props) {
                     </div>
                 </div>
             </body>
-            <Script
-                src="/umami/script.js"
-                data-website-id={UMAMI_WEBSITE_ID}
-                strategy="afterInteractive"
-            />
+            {UMAMI_WEBSITE_ID && (
+                <Script
+                    src="/umami/script.js"
+                    data-website-id={UMAMI_WEBSITE_ID}
+                    strategy="afterInteractive"
+                />
+            )}
         </html>
     )
 }
