@@ -1,6 +1,11 @@
 import { ReactNode } from 'react'
 import Script from 'next/script'
-import { SITE_TITLE, GITHUB, TWITTER, UMAMI_WEBSITE_ID } from '@lib/environments'
+import {
+    SITE_TITLE,
+    GITHUB,
+    TWITTER,
+    UMAMI_WEBSITE_ID,
+} from '@lib/environments'
 import { getPostTags } from '@lib/getPostTags'
 import { getPostMonths } from '@lib/getPostMonths'
 import { Sidebar } from '@lib/components/Sidebar'
@@ -32,7 +37,14 @@ export default async function RootLayout({ children }: Props) {
 
     return (
         <html lang="ja">
-            <head />
+            <head>
+                <link
+                    rel="alternate"
+                    type="application/rss+xml"
+                    title={SITE_TITLE}
+                    href="/feed.xml"
+                />
+            </head>
             <body className={styles.body}>
                 <div className={styles.container}>
                     <div className={styles.header}>
