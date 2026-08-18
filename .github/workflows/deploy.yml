@@ -26,6 +26,9 @@ jobs:
       NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${{ vars.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
       BLOG_PATH: blog
       HOST_URL: ${{ vars.HOST_URL }}
+      # 記事の日付は JST 前提。date-fns の format は実行環境の TZ で描画するため、
+      # UTC のランナーで組むと表示時刻と月別集計が9時間ずれる
+      TZ: Asia/Tokyo
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
