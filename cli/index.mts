@@ -1,5 +1,4 @@
 import cli from 'commander'
-import * as cmd from './cmds/index.mjs'
 import { join } from 'path'
 import { randomBytes } from 'crypto'
 import { mkdir, writeFile } from 'fs'
@@ -33,8 +32,6 @@ cli.command('add <dir>').action((root: string) => {
         })
     })
 })
-
-cli.command('sitemap').action(cmd.sitemap)
 
 // parse arguments and run
 cli.parse(process.argv)
