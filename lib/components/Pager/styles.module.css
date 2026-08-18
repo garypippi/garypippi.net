@@ -1,0 +1,21 @@
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-top: 32px;
+    font-size: 14px;
+
+    .link {
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    .current {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+}
