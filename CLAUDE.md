@@ -8,12 +8,20 @@
 npm run dev          # next dev (.env.local に BLOG_PATH が必要)
 npm run build        # -> ./out (BLOG_PATH と HOST_URL が必要)
 npm run lint         # eslint . (flat config: eslint.config.mjs)
-npm test             # 何もしない ("No test for now" を出すだけ)
+npm test             # jest (spec/ 配下、Markdown まわりのみ)
 npx tcm lib app      # CSS Modules の型を再生成 (後述、必須)
 npx stylelint "lib/**/*.css" "app/**/*.css"   # スクリプトなし
 ```
 
-テストは存在しない (`spec/` は `tsconfig.json` のみ)。`jest.config.ts` は設定済みだが `npm test` は jest に繋がっていない。テストを足すなら `test` スクリプトも直すこと — CI のデプロイゲートが `npm run test` を実行している。
+テストは `spec/` に置く (ts-jest + jsdom)。**カバーしているのは Markdown のパースとレンダリングだけ**で、データ層 (`getPost*`) やページのルートにはテストがない。CI のデプロイゲートが `npm run test` を実行するので、落ちるとデプロイされない。
+
+jest の設定で押さえておくべき点が3つある。
+
+- mdast / micromark / smol-toml は **ESM 専用**なので、`transformIgnorePatterns` でこれらだけ node_modules 内でも変換対象にしている。依存を足して `Unexpected token 'export'` が出たら、そのパッケージを `esmPackages` に追加する。
+- CSS Modules は `spec/cssModuleStub.js` (キー名をそのまま返す Proxy) に差し替えている。`__esModule` に truthy を返すと esModuleInterop の default 解決が壊れるので、そこだけ `false` を返している。
+- `spec/setupEnv.ts` が `IMAGE_PATH` / `VIDEO_PATH` を入れ、jsdom に足りない `TextEncoder` / `TextDecoder` を補う (`react-dom/server` が読み込み時に触るため)。
+
+コンポーネントは `renderToStaticMarkup` で文字列にして検証している (静的サイトなので最終成果物に一致する)。`@testing-library` は入れていない。
 
 stylelint に `**/*.css` を渡すと `out/_next` の圧縮 CSS まで拾って大量に誤検出する。上記のようにソースだけを指定する。
 
