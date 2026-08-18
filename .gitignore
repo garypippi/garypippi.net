@@ -6,3 +6,4 @@
 /.next
 /.env.local
 /lib/global.css.d.ts
+/next-env.d.ts
