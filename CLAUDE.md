@@ -9,23 +9,48 @@ npm run dev          # next dev (.env.local に BLOG_PATH が必要)
 npm run build        # -> ./out (BLOG_PATH と HOST_URL が必要)
 npm run lint         # eslint . (flat config: eslint.config.mjs)
 npm test             # jest (spec/ 配下、Markdown まわりのみ)
+npm run test:cli     # cli/ のテスト (tsc -p cli してから node:test)
+npm run build:cli    # tsc -p cli -> cli/dist/index.mjs
 npx tcm lib app      # CSS Modules の型を再生成 (後述、必須)
 npx stylelint "lib/**/*.css" "app/**/*.css"   # スクリプトなし
 ```
 
-テストは `spec/` に置く (ts-jest + jsdom)。**カバーしているのは Markdown のパースとレンダリングだけ**で、データ層 (`getPost*`) やページのルートにはテストがない。CI のデプロイゲートが `npm run test` を実行するので、落ちるとデプロイされない。
+テストは `spec/` に置く (ts-jest)。**カバーしているのは Markdown のパースとレンダリングだけ**で、データ層 (`getPost*`) やページのルートにはテストがない。CI のデプロイゲートが `npm run test` を実行するので、落ちるとデプロイされない。
 
-jest の設定で押さえておくべき点が3つある。
+jest の設定で押さえておくべき点が4つある。
 
 - mdast / micromark / smol-toml は **ESM 専用**なので、`transformIgnorePatterns` でこれらだけ node_modules 内でも変換対象にしている。依存を足して `Unexpected token 'export'` が出たら、そのパッケージを `esmPackages` に追加する。
 - CSS Modules は `spec/cssModuleStub.js` (キー名をそのまま返す Proxy) に差し替えている。`__esModule` に truthy を返すと esModuleInterop の default 解決が壊れるので、そこだけ `false` を返している。
-- `spec/setupEnv.ts` が `IMAGE_PATH` / `VIDEO_PATH` を入れ、jsdom に足りない `TextEncoder` / `TextDecoder` を補う (`react-dom/server` が読み込み時に触るため)。
+- `spec/setupEnv.ts` が `IMAGE_PATH` / `VIDEO_PATH` を入れる。`lib/environments.ts` が読み込み時に `process.env` を評価するので、テスト対象の import より前に置く必要がある。
+- `testEnvironment` は **`node`** (jsdom ではない)。検証しているのは `renderToStaticMarkup` の出力だけで DOM は要らず、静的エクスポートの実際のレンダリングも Node 上で起きるので本番に近い。React 19 の `react-dom/server` はブラウザ版だと `MessageChannel` を要求し jsdom に無いので読み込み時点で落ちる、という事情もある。node 環境では `TextEncoder` / `TextDecoder` も標準で入っているので補完は要らない。
 
 コンポーネントは `renderToStaticMarkup` で文字列にして検証している (静的サイトなので最終成果物に一致する)。`@testing-library` は入れていない。
 
 stylelint に `**/*.css` を渡すと `out/_next` の圧縮 CSS まで拾って大量に誤検出する。上記のようにソースだけを指定する。
 
-`cli/` (`npm run build:cli` → `cli/index.mjs add <dir>`) は**実質デッドコード**。記事作成は blog リポジトリ側の `cli.sh` で行われており、`build:cli` は CI からも外れている。
+## CLI
+
+`cli/` は blog リポジトリの記事を扱う CLI。記事フォーマット (TOML フロントマター、日時ディレクトリ、32桁hex の ID) の知識はレンダラーであるこのリポジトリ側にあるので、CLI もここに置いている。環境依存のメディア処理 (ffmpeg / exiftool / ImageMagick) と対話的な選択 UI は持ち込まず、blog リポ側の `cli.sh` に残す。
+
+`tsc -p cli` で `cli/dist/index.mjs` へ吐く (`cli/dist` は gitignore)。引数パースは citty。`BLOG_PATH` は `process.env` → リポジトリ root の `.env.local` の順で解決し、`--blog` で上書きできる。
+
+| コマンド                        | 内容                                                           |
+| ------------------------------- | -------------------------------------------------------------- |
+| `new <slug> [--title] [--weekly]` | `<blog>/.drafts/<slug>.md` にドラフトを作る                    |
+| `publish <slug>`                | 日時ディレクトリと ID を確定して公開形式へ移す                 |
+| `list [--json] [--drafts] [--weekly]` | 一覧。`--json` は TUI などへ食わせる機械可読出力          |
+| `lint`                          | フロントマター / 未対応 Markdown ノード / アセットの実在を検査 |
+| `tags [--rename X --to Y]`      | タグの一覧と一括リネーム                                       |
+
+押さえておくべき点が3つある。
+
+- **`publish` は現在時刻を一度だけ取得**し、日時ディレクトリ名とフロントマターの `date` の両方に使う。二度取ると秒をまたいだときにずれる。`date-fns` の `format` はローカルタイムゾーン依存なので `TZ=Asia/Tokyo` を付けること。
+- **smol-toml は日付を `TomlDate` (Date のサブクラス) にして返す。** 素朴に `String()` すると `Mon Jan 01 2024 ...` という TOML として不正な文字列になり、`tags --rename` の書き戻しで記事を壊す。`cli/blog.mts` の `formatDate` を通すこと (`toISOString` が smol-toml 側で上書きされていてオフセットを保つ)。同じ理由で `serialize` は本文を一切加工しない。
+- **`lint` はローカル専用。** アセットの実在検査が blog リポの `.images/768x/` を見るが、ここは gitignore されていて CI の `--depth 1` クローンには含まれない。原本の `.images/` ではなく縮小版を見るのは、原本が残っていない記事があり原本側だと誤検知するため。
+
+`cli/markdown.mts` の `SUPPORTED_NODE_TYPES` は **`lib/components/Post/index.tsx` の switch と対になっている**。向こうに `case` を足したらこちらにも足すこと。
+
+テストは jest ではなく **`node:test`** で回す (`npm run test:cli`)。jest 側は `.mts` の `.mjs` 付き import 指定子を解決するのに moduleResolution の作り替えが要るのに対し、CLI は素の Node で動く成果物なので、コンパイル済みの `cli/dist` を標準のテストランナーで直に検証する方が近い。**CI には入れていない。**
 
 ## 環境変数
 

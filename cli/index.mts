@@ -1,37 +1,30 @@
-import cli from 'commander'
-import { join } from 'path'
-import { randomBytes } from 'crypto'
-import { mkdir, writeFile } from 'fs'
-import { format, formatISO } from 'date-fns'
+import { defineCommand, runMain } from 'citty'
+import { newCommand } from './commands/new.mjs'
+import { publishCommand } from './commands/publish.mjs'
+import { listCommand } from './commands/list.mjs'
+import { lintCommand } from './commands/lint.mjs'
+import { tagsCommand } from './commands/tags.mjs'
 
-// encoding
-const encoding = 'utf8'
-
-// add new blog post
-cli.command('add <dir>').action((root: string) => {
-    // current time
-    const dt = new Date()
-    // determine unique id
-    const id = randomBytes(16).toString('hex')
-    // determine content
-    const md = `+++\ntitle = ""\ndate = ${formatISO(dt)}\ntags = []\n+++\n`
-    // determine directory
-    const dir = join(root, format(dt, 'yyyyMMddHHmmss'))
-    // determine file
-    const file = join(dir, `${id}.md`)
-    // make directory
-    mkdir(dir, err => {
-        if (err) {
-            throw new Error(`Failed to create directory: ${dir}`)
-        }
-        writeFile(file, md, { encoding }, err => {
-            if (err) {
-                throw new Error(`Failed to create file: ${file}`)
-            }
-            process.stdout.write(`+ ${file}\n`)
-        })
-    })
+/**
+ * blog リポジトリの記事を扱う CLI。
+ *
+ * 記事フォーマット (TOML フロントマター、日時ディレクトリ、32桁hex の ID) の
+ * 知識はレンダラーであるこのリポジトリ側にあるので、CLI もここに置いている。
+ * 環境依存のメディア処理 (ffmpeg / exiftool / ImageMagick) と対話的な選択 UI は
+ * blog リポ側のスクリプトに残す。
+ */
+const main = defineCommand({
+    meta: {
+        name: 'blog',
+        description: 'garypippi.net の記事を扱う',
+    },
+    subCommands: {
+        new: newCommand,
+        publish: publishCommand,
+        list: listCommand,
+        lint: lintCommand,
+        tags: tagsCommand,
+    },
 })
 
-// parse arguments and run
-cli.parse(process.argv)
+runMain(main)

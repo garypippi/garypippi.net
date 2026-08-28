@@ -11,7 +11,7 @@
     "noImplicitReturns": true,
     "target": "ES5",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "allowJs": true,
     "skipLibCheck": true,

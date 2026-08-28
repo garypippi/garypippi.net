@@ -1,6 +1,6 @@
 /node_modules
 /public
-/cli/**/*.mjs
+/cli/dist
 /out
 /tsconfig.tsbuildinfo
 /.next

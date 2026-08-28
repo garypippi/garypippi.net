@@ -7,7 +7,7 @@ const config = [
         ignores: [
             '.next/**',
             'out/**',
-            'cli/**/*.mjs',
+            'cli/dist/**',
             'next-env.d.ts',
             '**/*.module.css.d.ts',
         ],
