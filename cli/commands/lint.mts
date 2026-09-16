@@ -99,8 +99,7 @@ const checkBody = (entry: Entry, assets: string): Problem[] => {
 /**
  * フロントマター / 未対応 Markdown ノード / アセットの実在を検査する。
  *
- * アセットは blog リポの `.images/` を見るが、これは gitignore されていて CI の
- * `--depth 1` クローンには含まれない。**ローカル専用のコマンド**として扱うこと。
+ * アセットの実在検査は手元のファイルを見るので、**ローカル専用のコマンド**として扱うこと。
  */
 export const lintCommand = defineCommand({
     meta: {

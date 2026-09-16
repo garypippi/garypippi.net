@@ -2,7 +2,7 @@ import { readdir } from 'fs'
 import { BLOG_PATH } from './environments'
 
 /**
- * File name is random 14 characters
+ * `yyyyMMddHHmmss/<id>.md` (the directory name is 14 digits)
  */
 const blogFileRegExp = /\/\d{14}\/.+\.md$/
 

@@ -6,7 +6,7 @@ import { formatDate, serialize, splitFrontMatter } from '../dist/blog.mjs'
 /**
  * CLI のテストは jest ではなく node:test で回す。
  *
- * jest 側は jsdom 環境で、`.mts` の `.mjs` 付き import 指定子を解決するには
+ * jest 側で `.mts` の `.mjs` 付き import 指定子を解決するには
  * moduleResolution の作り替えが要る。CLI は素の Node で動く成果物なので、
  * コンパイル済みの `cli/dist` を標準のテストランナーで直に検証する方が近い。
  */
