@@ -15,46 +15,27 @@ npx tcm lib app      # CSS Modules の型を再生成 (後述、必須)
 npx stylelint "lib/**/*.css" "app/**/*.css"   # スクリプトなし
 ```
 
-テストは `spec/` に置く (ts-jest)。**カバーしているのは Markdown のパースとレンダリングだけ**で、データ層 (`getPost*`) やページのルートにはテストがない。CI のデプロイゲートが `npm run test` を実行するので、落ちるとデプロイされない。
+テストは `spec/` に置く (ts-jest、`testEnvironment: node`)。**カバーしているのは Markdown のパースとレンダリングだけ**で、データ層 (`getPost*`) やページのルートにはテストがない。コンポーネントは `renderToStaticMarkup` の出力を検証する。CI のデプロイゲートが `npm run test` を実行するので、落ちるとデプロイされない。
 
-jest の設定で押さえておくべき点が4つある。
-
-- mdast / micromark / smol-toml は **ESM 専用**なので、`transformIgnorePatterns` でこれらだけ node_modules 内でも変換対象にしている。依存を足して `Unexpected token 'export'` が出たら、そのパッケージを `esmPackages` に追加する。
-- CSS Modules は `spec/cssModuleStub.js` (キー名をそのまま返す Proxy) に差し替えている。`__esModule` に truthy を返すと esModuleInterop の default 解決が壊れるので、そこだけ `false` を返している。
+- mdast / micromark / smol-toml は **ESM 専用**。依存を足して `Unexpected token 'export'` が出たら、そのパッケージを `jest.config.ts` の `esmPackages` に追加する。
 - `spec/setupEnv.ts` が `IMAGE_PATH` / `VIDEO_PATH` を入れる。`lib/environments.ts` が読み込み時に `process.env` を評価するので、テスト対象の import より前に置く必要がある。
-- `testEnvironment` は **`node`** (jsdom ではない)。検証しているのは `renderToStaticMarkup` の出力だけで DOM は要らず、静的エクスポートの実際のレンダリングも Node 上で起きるので本番に近い。React 19 の `react-dom/server` はブラウザ版だと `MessageChannel` を要求し jsdom に無いので読み込み時点で落ちる、という事情もある。node 環境では `TextEncoder` / `TextDecoder` も標準で入っているので補完は要らない。
-
-コンポーネントは `renderToStaticMarkup` で文字列にして検証している (静的サイトなので最終成果物に一致する)。`@testing-library` は入れていない。
 
 stylelint に `**/*.css` を渡すと `out/_next` の圧縮 CSS まで拾って大量に誤検出する。上記のようにソースだけを指定する。
 
 ## CLI
 
-`cli/` は blog リポジトリの記事を扱う CLI。記事フォーマット (TOML フロントマター、日時ディレクトリ、32桁hex の ID) の知識はレンダラーであるこのリポジトリ側にあるので、CLI もここに置いている。メディア処理と対話的な選択 UI は持ち込まない。
+`cli/` は blog リポジトリの記事を扱う CLI (citty)。サブコマンドは `--help` で見られる。`tsc -p cli` で `cli/dist/` へ吐く (gitignore)。`BLOG_PATH` / `ASSETS_PATH` は `process.env` → リポジトリ root の `.env.local` の順で解決し、`--blog` / `--assets` で上書きできる。
 
-`tsc -p cli` で `cli/dist/index.mjs` へ吐く (`cli/dist` は gitignore)。引数パースは citty。`BLOG_PATH` は `process.env` → リポジトリ root の `.env.local` の順で解決し、`--blog` で上書きできる。`lint` のアセット置き場 `ASSETS_PATH` も同じ解決順で、`--assets` で上書きできる。
+- **`publish` は現在時刻を一度だけ取得**し、日時ディレクトリ名とフロントマターの `date` の両方に使う。`date-fns` の `format` はローカルタイムゾーン依存なので `TZ=Asia/Tokyo` を付けること。
+- **smol-toml の日付 (`TomlDate`) を `String()` すると TOML として不正になる。** 書き戻しは `cli/blog.mts` の `formatDate` / `serialize` を通すこと。`serialize` は本文を一切加工しない。
+- `lint` のアセット実在検査は `--assets` か `ASSETS_PATH` があるときだけ。無ければ検査だけ飛ばす。
+- `cli/markdown.mts` の `SUPPORTED_NODE_TYPES` は **`lib/components/Post/index.tsx` の switch と対になっている**。向こうに `case` を足したらこちらにも足すこと。
 
-| コマンド                        | 内容                                                           |
-| ------------------------------- | -------------------------------------------------------------- |
-| `new <slug> [--title] [--weekly]` | `<blog>/.drafts/<slug>.md` にドラフトを作る                    |
-| `publish <slug>`                | 日時ディレクトリと ID を確定して公開形式へ移す                 |
-| `list [--json] [--drafts] [--weekly]` | 一覧。`--json` は TUI などへ食わせる機械可読出力          |
-| `lint`                          | フロントマター / 未対応 Markdown ノード / アセットの実在を検査 |
-| `tags [--rename X --to Y]`      | タグの一覧と一括リネーム                                       |
-
-押さえておくべき点が3つある。
-
-- **`publish` は現在時刻を一度だけ取得**し、日時ディレクトリ名とフロントマターの `date` の両方に使う。二度取ると秒をまたいだときにずれる。`date-fns` の `format` はローカルタイムゾーン依存なので `TZ=Asia/Tokyo` を付けること。
-- **smol-toml は日付を `TomlDate` (Date のサブクラス) にして返す。** 素朴に `String()` すると `Mon Jan 01 2024 ...` という TOML として不正な文字列になり、`tags --rename` の書き戻しで記事を壊す。`cli/blog.mts` の `formatDate` を通すこと (`toISOString` が smol-toml 側で上書きされていてオフセットを保つ)。同じ理由で `serialize` は本文を一切加工しない。
-- **`lint` のアセット実在検査は `--assets` か `ASSETS_PATH` があるときだけ。** どちらも無ければ1行知らせて検査だけ飛ばす (フロントマターと未対応ノードの検査は行う)。指定されたパスが存在しなければ落とす。
-
-`cli/markdown.mts` の `SUPPORTED_NODE_TYPES` は **`lib/components/Post/index.tsx` の switch と対になっている**。向こうに `case` を足したらこちらにも足すこと。
-
-テストは jest ではなく **`node:test`** で回す (`npm run test:cli`)。jest 側は `.mts` の `.mjs` 付き import 指定子を解決するのに moduleResolution の作り替えが要るのに対し、CLI は素の Node で動く成果物なので、コンパイル済みの `cli/dist` を標準のテストランナーで直に検証する方が近い。**CI には入れていない。**
+テストは jest ではなく **`node:test`** で、コンパイル済みの `cli/dist` を検証する。**CI には入れていない。**
 
 ## 環境変数
 
-レンダラー側はすべて `lib/environments.ts` 経由 (`ASSETS_PATH` は CLI 専用)。`.env` にキーの一覧、実値は `.env.local` (gitignore)。**CI は `.env.local` を作らず、GitHub Actions の変数を job の `env:` に直接置いている** (`deploy.yml`)。サーバーサイドは `BLOG_PATH` と `HOST_URL` のみ、残りは `NEXT_PUBLIC_*` としてクライアントバンドルに展開される。
+レンダラー側はすべて `lib/environments.ts` 経由 (`ASSETS_PATH` は CLI 専用)。`.env` にキーの一覧、実値は `.env.local` (gitignore)。**CI は `.env.local` を作らず、GitHub Actions の変数を job の `env:` に直接置いている**。サーバーサイドは `BLOG_PATH` と `HOST_URL` のみ、残りは `NEXT_PUBLIC_*` としてクライアントバンドルに展開される。
 
 ## 記事のフォーマットとデータ層
 
@@ -71,57 +52,43 @@ tags = []
 `lib/get*.ts` がデータ層のすべてで、`fs` を触るためビルド時のみ呼べる。
 
 - `getPostPaths` は `BLOG_PATH` を再帰走査し、上の正規表現で絞って結果を**逆順にする** — 一覧が新しい順なのはこの逆順化によるもので、日付ソートではない。
-- `getPost` は正規表現でフロントマターを分割し `smol-toml` でパースする。`attr.date` は型宣言では `string` だが、実際には `TomlDate` (Date のサブクラス) が入る。
-- それ以外 (`getPosts`、`getPostById`、`getPostsByTag`、`getPostsByMonth`、`getPostTags`、`getPostMonths`、`getPostsByPage`) はすべて**全記事**を読み直してパースし直す。キャッシュはない。
+- `attr.date` は型宣言では `string` だが、実際には `TomlDate` (Date のサブクラス) が入る。
+- 各関数は毎回**全記事**を読み直してパースし直す。キャッシュはない。
 - `attr.draft` は型に存在するが、これでフィルタしている箇所はない。
 
 ## Markdown のレンダリング
 
-`getMdast` は `mdast-util-from-markdown` でパースするだけの同期関数。unified / remark は使わず、mdast を書き換えるプラグインも持たない。GFM はテーブルのみ有効で、取り消し線・脚注・autolink literal などは**入れていない**。
+`getMdast` は `mdast-util-from-markdown` でパースするだけの同期関数。unified / remark は使わない。GFM はテーブルのみ有効で、取り消し線・脚注・autolink literal などは**入れていない**。
 
-`lib/components/Post/index.tsx` は `node.type` の再帰的な switch で `Post/Markdown/*` へディスパッチし、**未対応の型では例外を投げる** (握り潰さない)。対応済みは `root` / `paragraph` / `text` / `list` / `listItem` / `image` / `heading` / `code` / `link` / `inlineCode` / `blockquote` / `table` の12種のみ。**`strong` / `emphasis` は未対応なので、記事で `**太字**` を使うとビルドが落ちる**。記法を足すにはコンポーネントを作り、`Post/Markdown/index.ts` から再エクスポートし、`case` を追加する。
+`lib/components/Post/index.tsx` は `node.type` の再帰的な switch で `Post/Markdown/*` へディスパッチし、**未対応の型では例外を投げる** (握り潰さない)。**`strong` / `emphasis` は未対応なので、記事で `**太字**` を使うとビルドが落ちる**。記法を足すにはコンポーネントを作り、`Post/Markdown/index.ts` から再エクスポートし、`case` を追加する。`tableRow` / `tableCell` は switch を通らず `Table` が直接描く。
 
-例外が2つ。`tableRow` / `tableCell` は switch を通らない — `<th>` と `<td>` の出し分けとカラムの寄せ (`node.align`) には行の位置という文脈が要るので、`Table` が `thead` / `tbody` を組み立てて `TableRow` → `TableCell` を直接呼び、セルの子だけが `Post` に戻る。`Video` にも `case` はなく `image` の分岐から呼ばれる。
+動画は**画像記法**で書く。`image` ノードの `url` が `.mp4` / `.webm` / `.mov` (大文字可) で終われば `<video>`、それ以外は `<img>` (`isVideoUrl`)。画像・動画の `url` には `IMAGE_PATH` / `VIDEO_PATH` が前置される — アセットは `public/` ではなく別ホストから配信される。
 
-動画は**独自記法ではなく画像記法**で書く。`![clip](clip.mp4)` のように `image` ノードの `url` が `.mp4` / `.webm` / `.mov` (大文字可) で終われば `Video` が `<video>` を、それ以外は `Image` が `<img>` を返す。分岐は `Post/index.tsx` の `isVideoUrl`。`!` なしの `[これ](clip.mp4)` は普通のリンクなので動画へのリンクも書ける。以前あった `see?[clip](foo.mp4)` という独自記法は、`root` 直下の段落しか走査せずリスト・引用・テーブルセル内で動かなかったため廃止した。
-
-`Text` は全文字列を **budoux** (`jaModel`) に通し、日本語の文節境界に `<wbr>` を入れる。`Code` はビルド時に highlight.js でハイライトして `dangerouslySetInnerHTML` で挿す (言語指定なしは `bash` にフォールバック)。画像・動画の `url` には `IMAGE_PATH` / `VIDEO_PATH` が前置される — アセットは `public/` ではなく別ホストから配信される。
+`Text` は全文字列を **budoux** に通し、日本語の文節境界に `<wbr>` を入れる。`Code` はビルド時に highlight.js でハイライトする (言語指定なしは `bash`)。
 
 ## ビルド時に生成される非HTML
 
-いずれも `next build` の中で出る。`HOST_URL` が空だとビルドが落ちる。
-
-| 出力              | ソース                  | 備考                                                                                                                  |
-| ----------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `out/sitemap.xml` | `app/sitemap.ts`        | `getPostPaths` から組み立てる (`out/` のファイル名は見ない)。一覧のページと記事のみで `/tags/*` `/month/*` は載せない |
-| `out/robots.txt`  | `app/robots.ts`         | 全許可 + サイトマップの位置                                                                                           |
-| `out/feed.xml`    | `app/feed.xml/route.ts` | RSS 2.0。RSS は Next の規約ルートに無いので Route Handler を自前で書いている                                          |
-
-RSS の `description` は `getPostExcerpt` によるプレーンテキストの抜粋 (200字)。mdast を歩くが**コードブロック・画像・生HTMLは飛ばす**ため、本文がコードブロックだけの記事は抜粋が空になり、その場合は `<description>` 要素ごと省く。`app/layout.tsx` の `<head>` から `rel="alternate"` で発見させている。
+`app/sitemap.ts` / `app/robots.ts` / `app/feed.xml/route.ts` が `next build` の中で `out/` に出す。`HOST_URL` が空だとビルドが落ちる。サイトマップは一覧のページと記事のみで `/tags/*` `/month/*` は載せない。
 
 ## 一覧のページング
 
-`lib/getPostsByPage.ts` で10件ずつ (`POSTS_PER_PAGE`)。**1ページ目は `/` が担当し、`app/page/[page]/page.tsx` は 2 以降だけを生成する** — 既存URLを壊さないためで、`/page/1` は存在しない。ページ番号からURLを引くのは `getPageHref` の一箇所だけなので、URL形式を変えるならそこを直す。
-
-タグ別・月別はページングしていない (タグ最大5件、月別最大3件で不要なため)。
+`lib/getPostsByPage.ts` で10件ずつ。**1ページ目は `/` が担当し、`app/page/[page]/page.tsx` は 2 以降だけを生成する** — 既存URLを壊さないためで、`/page/1` は存在しない。ページ番号からURLを引くのは `getPageHref` の一箇所だけ。タグ別・月別はページングしていない。
 
 ## タイムゾーン
 
-記事の日付は JST 前提だが、`date-fns` の `format` は**実行環境のローカルタイムゾーン**で描画する。`Header` の表示時刻と `getPostMonths` / `getPostsByMonth` の月別集計が両方これに依存するため、UTC のマシンで組むと9時間ずれる。CI は `deploy.yml` の build ジョブに `TZ: Asia/Tokyo` を置いて揃えている。JST 以外の環境で作業するときは同じ指定が要る。
+記事の日付は JST 前提だが、`date-fns` の `format` は**実行環境のローカルタイムゾーン**で描画する。`Header` の表示時刻と月別集計が両方これに依存するため、UTC のマシンで組むと9時間ずれる。CI は build ジョブに `TZ: Asia/Tokyo` を置いて揃えている。JST 以外の環境で作業するときは同じ指定が要る。
 
 ## 静的エクスポートの落とし穴
 
-`app/sitemap.ts` / `app/robots.ts` / `app/feed.xml/route.ts` には **`export const dynamic = 'force-static'` が必須**。これらは `page.tsx` ではなく Route Handler にコンパイルされ、`output: 'export'` は force-static も revalidate も宣言されていない Route Handler をエクスポート不能と判断してビルドを止める。「静的エクスポートなんだから不要だろう」と外すと `Failed to collect page data` で落ちる。
+`app/sitemap.ts` / `app/robots.ts` / `app/feed.xml/route.ts` には **`export const dynamic = 'force-static'` が必須**。外すと `Failed to collect page data` で落ちる。
 
 `app/tags/[tag]/page.tsx` はタグのパラメータを条件付きでエンコードしている: `PHASE_PRODUCTION_BUILD` 中はそのまま、それ以外は `encodeURIComponent`。タグは日本語で `+` やスペースを含み、dev とエクスポートでエンコードの扱いが食い違う。`npm run dev` と生成された `out/tags/*.html` の両方を確認せずにこの分岐を「単純化」しないこと。
 
 ## スタイリング
 
-コンポーネントごとの CSS Modules (`styles.module.css`)。**`typed-css-modules` が生成した `.module.css.d.ts` をコミットしている**が、スクリプトもウォッチャーも無いので `.module.css` を編集したら `npx tcm lib app` で型を再生成すること。グローバルは `lib/global.css` (`app/layout.tsx` から import)。tcm は CSS Modules でない `global.css` にも空の `.d.ts` を吐くが不要なので gitignore してある。
+コンポーネントごとの CSS Modules (`styles.module.css`)。**`typed-css-modules` が生成した `.module.css.d.ts` をコミットしている**が、スクリプトもウォッチャーも無いので `.module.css` を編集したら `npx tcm lib app` で型を再生成すること。グローバルは `lib/global.css` で、`:root` の `--font` / `--fg` / `--fg-weak` / `--bg` / `--rule` を各コンポーネントが参照する。
 
-`lib/global.css` が `:root` に `--font` / `--fg` / `--fg-weak` / `--bg` / `--rule` を定義しており、各コンポーネントはこれを参照する。**`--font` で等幅を明示指定している** — 以前は `font-family` 未指定で読者のブラウザ既定に見た目が左右されていた。
-
-`next/link` と `next/image` はどこでも使わず、素の `<a>` と `<img>` で統一している (画像は別ホスト配信のため)。対応する ESLint ルールは `eslint.config.mjs` で off にしてある。
+`next/link` と `next/image` は使わず、素の `<a>` と `<img>` で統一している。
 
 ## 規約
 
@@ -129,4 +96,4 @@ Prettier: インデント4スペース、セミコロンなし、シングルク
 
 ## デプロイ
 
-`.github/workflows/deploy.yml` が `master` への push で動く: blog をクローン → lint → test → `npm run build` → artifact 経由で deploy ジョブへ → Tailscale → `rsync --delete` で `out/` を SSH 転送。**完全なミラーなので `out/` に無いものはサーバーから消える**。build と deploy の両ジョブに `test -f` の verify ステップがあり、成果物が欠けたら止まる。
+`master` への push で lint → test → build → デプロイ。**`rsync --delete` の完全なミラーなので `out/` に無いものはサーバーから消える**。
