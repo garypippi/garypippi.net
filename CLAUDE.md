@@ -30,9 +30,9 @@ stylelint に `**/*.css` を渡すと `out/_next` の圧縮 CSS まで拾って�
 
 ## CLI
 
-`cli/` は blog リポジトリの記事を扱う CLI。記事フォーマット (TOML フロントマター、日時ディレクトリ、32桁hex の ID) の知識はレンダラーであるこのリポジトリ側にあるので、CLI もここに置いている。環境依存のメディア処理 (ffmpeg / exiftool / ImageMagick) と対話的な選択 UI は持ち込まず、blog リポ側の `cli.sh` に残す。
+`cli/` は blog リポジトリの記事を扱う CLI。記事フォーマット (TOML フロントマター、日時ディレクトリ、32桁hex の ID) の知識はレンダラーであるこのリポジトリ側にあるので、CLI もここに置いている。メディア処理と対話的な選択 UI は持ち込まない。
 
-`tsc -p cli` で `cli/dist/index.mjs` へ吐く (`cli/dist` は gitignore)。引数パースは citty。`BLOG_PATH` は `process.env` → リポジトリ root の `.env.local` の順で解決し、`--blog` で上書きできる。
+`tsc -p cli` で `cli/dist/index.mjs` へ吐く (`cli/dist` は gitignore)。引数パースは citty。`BLOG_PATH` は `process.env` → リポジトリ root の `.env.local` の順で解決し、`--blog` で上書きできる。`lint` のアセット置き場 `ASSETS_PATH` も同じ解決順で、`--assets` で上書きできる。
 
 | コマンド                        | 内容                                                           |
 | ------------------------------- | -------------------------------------------------------------- |
@@ -46,7 +46,7 @@ stylelint に `**/*.css` を渡すと `out/_next` の圧縮 CSS まで拾って�
 
 - **`publish` は現在時刻を一度だけ取得**し、日時ディレクトリ名とフロントマターの `date` の両方に使う。二度取ると秒をまたいだときにずれる。`date-fns` の `format` はローカルタイムゾーン依存なので `TZ=Asia/Tokyo` を付けること。
 - **smol-toml は日付を `TomlDate` (Date のサブクラス) にして返す。** 素朴に `String()` すると `Mon Jan 01 2024 ...` という TOML として不正な文字列になり、`tags --rename` の書き戻しで記事を壊す。`cli/blog.mts` の `formatDate` を通すこと (`toISOString` が smol-toml 側で上書きされていてオフセットを保つ)。同じ理由で `serialize` は本文を一切加工しない。
-- **`lint` はローカル専用。** アセットの実在検査が blog リポの `.images/768x/` を見るが、ここは gitignore されていて CI の `--depth 1` クローンには含まれない。原本の `.images/` ではなく縮小版を見るのは、原本が残っていない記事があり原本側だと誤検知するため。
+- **`lint` のアセット実在検査は `--assets` か `ASSETS_PATH` があるときだけ。** どちらも無ければ1行知らせて検査だけ飛ばす (フロントマターと未対応ノードの検査は行う)。指定されたパスが存在しなければ落とす。
 
 `cli/markdown.mts` の `SUPPORTED_NODE_TYPES` は **`lib/components/Post/index.tsx` の switch と対になっている**。向こうに `case` を足したらこちらにも足すこと。
 
@@ -54,7 +54,7 @@ stylelint に `**/*.css` を渡すと `out/_next` の圧縮 CSS まで拾って�
 
 ## 環境変数
 
-すべて `lib/environments.ts` 経由。`.env` にキーの一覧、実値は `.env.local` (gitignore)。**CI は `.env.local` を作らず、GitHub Actions の変数を job の `env:` に直接置いている** (`deploy.yml`)。サーバーサイドは `BLOG_PATH` と `HOST_URL` のみ、残りは `NEXT_PUBLIC_*` としてクライアントバンドルに展開される。
+レンダラー側はすべて `lib/environments.ts` 経由 (`ASSETS_PATH` は CLI 専用)。`.env` にキーの一覧、実値は `.env.local` (gitignore)。**CI は `.env.local` を作らず、GitHub Actions の変数を job の `env:` に直接置いている** (`deploy.yml`)。サーバーサイドは `BLOG_PATH` と `HOST_URL` のみ、残りは `NEXT_PUBLIC_*` としてクライアントバンドルに展開される。
 
 ## 記事のフォーマットとデータ層
 

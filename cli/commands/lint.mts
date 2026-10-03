@@ -1,16 +1,16 @@
 import { defineCommand } from 'citty'
 import { existsSync } from 'fs'
 import { join } from 'path'
-import { ASSETS_DIR, Entry, readDrafts, readPosts } from '../blog.mjs'
-import { resolveBlogPath } from '../env.mjs'
+import { Entry, readDrafts, readPosts } from '../blog.mjs'
+import { getEnv, resolveBlogPath } from '../env.mjs'
 import { findAssetUrls, findUnsupportedTypes } from '../markdown.mjs'
 
 /**
  * フロントマターの既知キー。
  *
- * **未知キーは warning に留め、error にしない。** 厳格にすると、後から OGP の
- * 画像指定キーを足すときに「先に lint を直さないと既存記事が落ちる」という
- * 順序の縛りが生まれる。error にするのは必須キーの欠落と型の不一致だけ。
+ * **未知キーは warning に留め、error にしない。** 厳格にすると、後からキーを
+ * 足すときに「先に lint を直さないと既存記事が落ちる」という順序の縛りが
+ * 生まれる。error にするのは必須キーの欠落と型の不一致だけ。
  */
 const KNOWN_KEYS = new Set(['title', 'date', 'tags', 'type'])
 
@@ -80,6 +80,10 @@ const checkBody = (entry: Entry, assets: string): Problem[] => {
         })
     }
 
+    if (!assets) {
+        return problems
+    }
+
     for (const url of findAssetUrls(entry.body)) {
         // 別ホストを直接指しているものは検査のしようがないので飛ばす
         if (/^[a-z]+:\/\//i.test(url)) {
@@ -99,7 +103,7 @@ const checkBody = (entry: Entry, assets: string): Problem[] => {
 /**
  * フロントマター / 未対応 Markdown ノード / アセットの実在を検査する。
  *
- * アセットの実在検査は手元のファイルを見るので、**ローカル専用のコマンド**として扱うこと。
+ * アセットの実在検査は `--assets` か `ASSETS_PATH` があるときだけ行う。
  */
 export const lintCommand = defineCommand({
     meta: {
@@ -109,7 +113,7 @@ export const lintCommand = defineCommand({
     args: {
         assets: {
             type: 'string',
-            description: `アセットの置き場所 (既定は <blog>/${ASSETS_DIR})`,
+            description: 'アセットの置き場所 (既定は ASSETS_PATH)',
         },
         blog: {
             type: 'string',
@@ -118,7 +122,14 @@ export const lintCommand = defineCommand({
     },
     run({ args }) {
         const blog = resolveBlogPath(args.blog)
-        const assets = args.assets || join(blog, ASSETS_DIR)
+        const assets = args.assets || getEnv('ASSETS_PATH')
+        if (!assets) {
+            process.stdout.write(
+                'ASSETS_PATH が無いので、アセットの実在検査は飛ばす\n',
+            )
+        } else if (!existsSync(assets)) {
+            throw new Error(`ASSETS_PATH が存在しない: ${assets}`)
+        }
         const entries = [...readDrafts(blog), ...readPosts(blog)]
 
         let errors = 0

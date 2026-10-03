@@ -22,12 +22,6 @@ const frontMatterRegExp = /^\+{3}\s([^]*?(?!\+{3}))\s\+{3}\s([^]*)$/
  */
 export const DRAFTS_DIR = '.drafts'
 
-/**
- * 配信しているアセットの置き場所。原本 (`.images/`) ではなく縮小版を見る。
- * 原本が残っていない記事があり、原本側を見ると存在検査が誤検知するため。
- */
-export const ASSETS_DIR = join('.images', '768x')
-
 export type Attr = {
     title?: unknown
     date?: unknown
@@ -46,7 +40,7 @@ export type Entry = {
 }
 
 /**
- * 記事 ID。cli.sh の `hexdump -vn16` と同じ 32桁hex。
+ * 記事 ID。16バイトの乱数を 32桁hex にしたもの。
  */
 export const createId = (): string => randomBytes(16).toString('hex')
 

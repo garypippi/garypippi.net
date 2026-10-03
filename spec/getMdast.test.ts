@@ -23,7 +23,7 @@ describe('getMdast', () => {
         expect(table.type === 'table' && table.align).toEqual(['left', 'right'])
     })
 
-    // テーブル以外の GFM は意図的に入れていない (CLAUDE.md 参照)。
+    // テーブル以外の GFM は意図的に入れていない。
     // 有効化するとこのテストが落ちるので、そのときは記法の対応も一緒に考えること
     it('取り消し線は GFM として解釈しない', () => {
         const root = getMdast('~~消し~~\n')

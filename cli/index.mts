@@ -10,8 +10,6 @@ import { tagsCommand } from './commands/tags.mjs'
  *
  * 記事フォーマット (TOML フロントマター、日時ディレクトリ、32桁hex の ID) の
  * 知識はレンダラーであるこのリポジトリ側にあるので、CLI もここに置いている。
- * 環境依存のメディア処理 (ffmpeg / exiftool / ImageMagick) と対話的な選択 UI は
- * blog リポ側のスクリプトに残す。
  */
 const main = defineCommand({
     meta: {
